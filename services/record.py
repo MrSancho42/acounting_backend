@@ -13,9 +13,13 @@ class RecordService(BaseService):
         description: str,
         kind: RecordKinds,
         creation_time: datetime = datetime.now(),
-        currency: str = 'UAH'
+        currency: str = 'UAH',
+        pk_record=None,
+        fk_bill=None
     ):
         self.repository.create(Record(
+            pk_record=pk_record,
+            fk_bill=fk_bill,
             from_bill=from_bill,
             amount=amount,
             description=description,

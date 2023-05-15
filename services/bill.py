@@ -7,18 +7,22 @@ class BillService(BaseService):
 
     def create(
         self,
+        pk_bill: int,
+        fk_user: int,
         owner: User,
         name: str,
         amount: float,
-        is_for_business: bool = False,
-        currency: str = 'UAH'
+        currency: str,
+        is_for_business: bool = False
     ):
         self.repository.create(Bill(
+            pk_bill=pk_bill,
+            fk_user=fk_user,
             owner=owner,
             name=name,
             amount=amount,
-            is_for_business=is_for_business,
-            currency=currency
+            currency=currency,
+            is_for_business=is_for_business
         ))
 
     def read(self, pk_bill: int) -> Bill:
@@ -26,15 +30,3 @@ class BillService(BaseService):
 
     def delete(self):
         ...
-
-    def get_bills(self, user: User):
-        return list(map(
-            lambda bill: {
-                'pk_bill': bill.pk_bill,
-                'name': bill.name,
-                'amount': bill.amount,
-                'currency': bill.currency,
-                'is_for_business': bill.is_for_business
-            },
-            user.bills
-        ))

@@ -5,6 +5,7 @@ from services.base_service import BaseService
 class UserService(BaseService):
 
     def create(self, user_data: dict):
+        user_data['pk_user'] = None
         self.repository.create(User(**user_data))
 
     def read(self, pk_user: int) -> User:
