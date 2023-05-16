@@ -3,3 +3,12 @@ from .user import UserService
 from .bill import BillService
 from .record import RecordService
 from .business_record import BusinessRecordService
+from .employee import EmployeeService
+from .business_employee import BusinessEmployeeService
+from .credit import CreditService
+from .category import CategoryService
+from .user_category import UserCategoryService
+from .business_category import BusinessCategoryService
+from .sub_category import SubCategoryService
+from .user_sub_category import UserSubCategoryService
+from .business_sub_category import BusinessSubCategoryService

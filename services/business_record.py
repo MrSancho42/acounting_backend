@@ -14,7 +14,10 @@ class BusinessRecordService(BaseService):
         description: str,
         kind: RecordKinds,
         creation_time: datetime = datetime.now(),
-        currency: str = 'UAH'
+        currency: str = 'UAH',
+        pk_record: int = None,
+        fk_bill: int = None,
+        fk_business: int = None
     ):
         self.repository.create(BusinessRecord(
             from_bill=from_bill,
@@ -23,7 +26,10 @@ class BusinessRecordService(BaseService):
             description=description,
             kind=kind,
             creation_time=creation_time,
-            currency=currency
+            currency=currency,
+            pk_record=pk_record,
+            fk_bill=fk_bill,
+            fk_business=fk_business
         ))
 
     def read(self, pk_record: int) -> BusinessRecord:
