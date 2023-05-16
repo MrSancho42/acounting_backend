@@ -1,4 +1,4 @@
-from domain import SubCategory, Business, BusinessSubCategory
+from domain import BusinessSubCategory, BusinessCategory
 from services.base_service import BaseService
 
 
@@ -6,18 +6,19 @@ class BusinessSubCategoryService(BaseService):
 
     def create(
         self,
-        from_business: Business,
-        from_sub_category: SubCategory,
-        pk_business_sub_category: int = None,
-        fk_sub_category: int = None,
-        fk_business: int = None
+        depends_on_business_category: BusinessCategory,
+        name: str,
+        ico: str,
+        colour: str,
     ):
         self.repository.create(BusinessSubCategory(
-            from_business=from_business,
-            from_sub_category=from_sub_category,
-            pk_business_sub_category=pk_business_sub_category,
-            fk_sub_category=fk_sub_category,
-            fk_business=fk_business
+            depends_on_business_category=depends_on_business_category,
+            name=name,
+            ico=ico,
+            colour=colour,
+
+            pk_business_sub_category=None,
+            fk_business_category=None
         ))
 
     def read(self, pk_business_sub_category: int) -> BusinessSubCategory:

@@ -11,13 +11,16 @@ class RecordKinds(Enum):
 
 @dataclass
 class User:
-    pk_user: int
+    pk_user: int | None
 
     name: str
     email: str
     password: str
 
     businesses: list = field(default_factory=list)
+    bills: list = field(default_factory=list)
+    creates: list = field(default_factory=list)
+    user_categories: list = field(default_factory=list)
 
 
 class UserException:
@@ -31,18 +34,22 @@ class UserException:
 
 @dataclass
 class Business:
-    pk_business: int
-    fk_user: int
+    pk_business: int | None
+    fk_user: int | None
 
     name: str
 
     owner: User
 
+    records: list = field(default_factory=list)
+    employees: list = field(default_factory=list)
+    business_categories: list = field(default_factory=list)
+
 
 @dataclass
 class Bill:
-    pk_bill: int
-    fk_user: int
+    pk_bill: int | None
+    fk_user: int | None
 
     name: str
     amount: float
@@ -51,11 +58,14 @@ class Bill:
 
     owner: User
 
+    records: list = field(default_factory=list)
+    business_records: list = field(default_factory=list)
+
 
 @dataclass
 class Record:
-    pk_record: int
-    fk_bill: int
+    pk_record: int | None
+    fk_bill: int | None
 
     amount: float
     description: str
@@ -68,94 +78,79 @@ class Record:
 
 @dataclass
 class BusinessRecord(Record):
-    fk_business: int
+    fk_business: int | None
 
     from_business: Business
 
 
 @dataclass()
 class Employee:
-    pk_employee: int
+    pk_employee: int | None
+    fk_business: int | None
 
     name: str
 
-
-@dataclass()
-class BusinessEmployee:
-    pk_id: int
-    fk_business: int
-    fk_employee: int
+    from_business: Business
 
 
 @dataclass()
 class Credit:
-    pk_credit: int
-    fk_user: int
+    pk_credit: int | None
+    fk_user: int | None
 
     name: str
     total_cost: float
     total_size: float
     due_date: datetime
 
-    credit_owner: User
+    owner: User
 
 
 @dataclass()
 class Category:
-    pk_category: int
-
     name: str
     ico: str
     colour: str
 
 
 @dataclass()
-class UserCategory:
-    pk_user_category: int
-    fk_user: int
-    fk_category: int
+class UserCategory(Category):
+    pk_user_category: int | None
+    fk_user: int | None
 
     from_user: User
-    from_category: Category
+
+    sub_categories: list = field(default_factory=list)
 
 
 @dataclass()
-class BusinessCategory:
-    pk_business_category: int
-    fk_business: int
-    fk_category: int
+class BusinessCategory(Category):
+    pk_business_category: int | None
+    fk_business: int | None
 
     from_business: Business
-    from_category: Category
+
+    sub_categories: list = field(default_factory=list)
 
 
 @dataclass()
 class SubCategory:
-    pk_sub_category: int
-    fk_category: int
-
     name: str
     ico: str
     colour: str
 
-    depends_on_category: Category
+
+@dataclass()
+class UserSubCategory(SubCategory):
+    pk_user_sub_category: int | None
+    fk_user_category: int | None
+
+    depends_on_user_category: UserCategory
 
 
 @dataclass()
-class UserSubCategory:
-    pk_user_sub_category: int
-    fk_user: int
-    fk_sub_category: int
+class BusinessSubCategory(SubCategory):
+    pk_business_sub_category: int | None
+    fk_business_category: int | None
 
-    from_user: User
-    from_sub_category: SubCategory
-
-
-@dataclass()
-class BusinessSubCategory:
-    pk_business_sub_category: int
-    fk_business: int
-    fk_sub_category: int
-
-    from_business: Business
-    from_sub_category: SubCategory
+    depends_on_business_category: BusinessCategory

@@ -11,12 +11,9 @@ from services import (
     RecordService,
     BusinessRecordService,
     EmployeeService,
-    BusinessEmployeeService,
     CreditService,
-    CategoryService,
     UserCategoryService,
     BusinessCategoryService,
-    SubCategoryService,
     BusinessSubCategoryService,
     UserSubCategoryService
 )
@@ -26,6 +23,7 @@ engine = sqlalchemy.create_engine(
     f'postgresql+psycopg2://{secrets.DB_USER_NAME}:{secrets.DB_USER_PASSWORD}@localhost:5432/accounting_db'
 )
 
+# engine = sqlalchemy.create_engine('sqlite:///./db.db')
 
 adapter_orm.metadata.create_all(engine)
 adapter_orm.mappers()
@@ -39,19 +37,16 @@ bill_service = BillService(repository)
 record_service = RecordService(repository)
 business_record_service = BusinessRecordService(repository)
 employee_service = EmployeeService(repository)
-business_employee_service = BusinessEmployeeService(repository)
 credit_service = CreditService(repository)
-category_service = CategoryService(repository)
 user_category_service = UserCategoryService(repository)
 business_category_service = BusinessCategoryService(repository)
-sub_category_service = SubCategoryService(repository)
 user_sub_category_service = UserSubCategoryService(repository)
 business_sub_category_service = BusinessSubCategoryService(repository)
 
-business_sub_category_service.create(
-    from_business=business_service.read(1),
-    from_sub_category=sub_category_service.read(1),
-)
+# business_sub_category_service.create(
+#     from_business=business_service.read(1),
+#     from_sub_category=sub_category_service.read(1),
+# )
 
 # sub_category_service.create(name='qwerty', depends_on_category=category_service.read(1))
 

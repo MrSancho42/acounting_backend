@@ -7,22 +7,21 @@ class CreditService(BaseService):
 
     def create(
         self,
+        owner: User,
         name: str,
-        credit_owner: User,
         total_cost: float,
         total_size: float,
-        due_date: datetime = datetime.now(),
-        pk_credit=None,
-        fk_user=None
+        due_date: datetime = datetime.now()
     ):
         self.repository.create(Credit(
+            owner=owner,
             name=name,
-            credit_owner=credit_owner,
             total_cost=total_cost,
             total_size=total_size,
             due_date=due_date,
-            pk_credit=pk_credit,
-            fk_user=fk_user
+
+            pk_credit=None,
+            fk_user=None
         ))
 
     def read(self, pk_credit: int) -> Credit:

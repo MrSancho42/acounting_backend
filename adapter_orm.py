@@ -81,17 +81,8 @@ table_employee = Table(
 
     Column('name', String(255)),
 
-    Column('pk_employee', Integer, primary_key=True, autoincrement=True)
-)
-
-
-table_business_employee = Table(
-    'business_employee',
-    mapper_registry.metadata,
-
-    Column('pk_id', Integer, primary_key=True, autoincrement=True),
+    Column('pk_employee', Integer, primary_key=True, autoincrement=True),
     Column('fk_business', Integer, ForeignKey('business.pk_business')),
-    Column('fk_employee', Integer, ForeignKey('employee.pk_employee'))
 )
 
 
@@ -109,25 +100,16 @@ table_credit = Table(
 )
 
 
-table_category = Table(
-    'category',
+table_user_category = Table(
+    'user_category',
     mapper_registry.metadata,
 
     Column('name', String(255)),
     Column('ico', String(255)),
     Column('colour', String(6)),
 
-    Column('pk_category', Integer, primary_key=True, autoincrement=True)
-)
-
-
-table_user_category = Table(
-    'user_category',
-    mapper_registry.metadata,
-
     Column('pk_user_category', Integer, primary_key=True, autoincrement=True),
     Column('fk_user', Integer, ForeignKey('user.pk_user')),
-    Column('fk_category', Integer, ForeignKey('category.pk_category'))
 )
 
 
@@ -135,22 +117,12 @@ table_business_category = Table(
     'business_category',
     mapper_registry.metadata,
 
-    Column('pk_business_category', Integer, primary_key=True, autoincrement=True),
-    Column('fk_business', Integer, ForeignKey('business.pk_business')),
-    Column('fk_category', Integer, ForeignKey('category.pk_category'))
-)
-
-
-table_sub_category = Table(
-    'sub_category',
-    mapper_registry.metadata,
-
     Column('name', String(255)),
     Column('ico', String(255)),
     Column('colour', String(6)),
 
-    Column('pk_sub_category', Integer, primary_key=True, autoincrement=True),
-    Column('fk_category', Integer, ForeignKey('category.pk_category'))
+    Column('pk_business_category', Integer, primary_key=True, autoincrement=True),
+    Column('fk_business', Integer, ForeignKey('business.pk_business'))
 )
 
 
@@ -158,9 +130,12 @@ table_user_sub_category = Table(
     'user_sub_category',
     mapper_registry.metadata,
 
+    Column('name', String(255)),
+    Column('ico', String(255)),
+    Column('colour', String(6)),
+
     Column('pk_user_sub_category', Integer, primary_key=True, autoincrement=True),
-    Column('fk_user', Integer, ForeignKey('user.pk_user')),
-    Column('fk_sub_category', Integer, ForeignKey('sub_category.pk_sub_category'))
+    Column('fk_user_category', Integer, ForeignKey('user_category.pk_user_category'))
 )
 
 
@@ -168,9 +143,12 @@ table_business_sub_category = Table(
     'business_sub_category',
     mapper_registry.metadata,
 
+    Column('name', String(255)),
+    Column('ico', String(255)),
+    Column('colour', String(6)),
+
     Column('pk_business_sub_category', Integer, primary_key=True, autoincrement=True),
-    Column('fk_business', Integer, ForeignKey('business.pk_business')),
-    Column('fk_sub_category', Integer, ForeignKey('sub_category.pk_sub_category'))
+    Column('fk_business_category', Integer, ForeignKey('business_category.pk_business_category'))
 )
 
 
@@ -210,30 +188,22 @@ def mappers():
     mapper_registry.map_imperatively(
         domain.Employee,
         table_employee,
-    )
-
-    mapper_registry.map_imperatively(
-        domain.BusinessEmployee,
-        table_business_employee,
+        properties={
+            'from_business': relationship(domain.Business, backref='employees')
+        },
     )
 
     mapper_registry.map_imperatively(
         domain.Credit,
         table_credit,
-        properties={'credit_owner': relationship(domain.User, backref='credits')}
-    )
-
-    mapper_registry.map_imperatively(
-        domain.Category,
-        table_category,
+        properties={'owner': relationship(domain.User, backref='credits')}
     )
 
     mapper_registry.map_imperatively(
         domain.UserCategory,
         table_user_category,
         properties={
-            'from_user': relationship(domain.User, backref='user_categories'),
-            'from_category': relationship(domain.Category, backref='user_categories')
+            'from_user': relationship(domain.User, backref='user_categories')
         }
     )
 
@@ -241,16 +211,7 @@ def mappers():
         domain.BusinessCategory,
         table_business_category,
         properties={
-            'from_business': relationship(domain.Business, backref='business_categories'),
-            'from_category': relationship(domain.Category, backref='business_categories')
-        }
-    )
-
-    mapper_registry.map_imperatively(
-        domain.SubCategory,
-        table_sub_category,
-        properties={
-            'depends_on_category': relationship(domain.Category, backref='category_sub_categories')
+            'from_business': relationship(domain.Business, backref='business_categories')
         }
     )
 
@@ -258,8 +219,7 @@ def mappers():
         domain.UserSubCategory,
         table_user_sub_category,
         properties={
-            'from_user': relationship(domain.User, backref='user_sub_categories'),
-            'from_sub_category': relationship(domain.SubCategory, backref='user_sub_categories')
+            'depends_on_user_category': relationship(domain.UserCategory, backref='sub_categories')
         }
     )
 
@@ -267,7 +227,6 @@ def mappers():
         domain.BusinessSubCategory,
         table_business_sub_category,
         properties={
-            'from_business': relationship(domain.Business, backref='business_sub_categories'),
-            'from_sub_category': relationship(domain.SubCategory, backref='business_sub_categories')
+            'depends_on_business_category': relationship(domain.BusinessCategory, backref='sub_categories')
         }
     )
