@@ -37,6 +37,7 @@ class UpdateBill(BaseModel):
 
 @router.post('/create', status_code=status.HTTP_201_CREATED)
 async def create(pk_user: Annotated[int, Body(embed=True)], bill: CreateBill):
+    print("Create Bill >>> ", bill)
     bill_service.create(
         owner=user_service.read(pk_user),
         **bill.dict()
@@ -61,5 +62,5 @@ async def update(bill: UpdateBill):
 
 
 @router.get('/get-bills', response_model=list[Bill])
-async def get_businesses(pk_user: int):
-    return bill_service.get_bills(user_service.read(pk_user))
+async def get_bills(pk_user: int, for_business: bool = False):
+    return bill_service.get_bills(user_service.read(pk_user), for_business=for_business)

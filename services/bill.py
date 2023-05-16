@@ -29,7 +29,8 @@ class BillService(BaseService):
     def delete(self):
         ...
 
-    def get_bills(self, user: User):
+    def get_bills(self, user: User, for_business: bool):
+        bills = list(filter(lambda bill: not for_business or bill.is_for_business, user.bills))
         return list(map(
             lambda bill: {
                 'pk_bill': bill.pk_bill,
@@ -38,5 +39,5 @@ class BillService(BaseService):
                 'currency': bill.currency,
                 'is_for_business': bill.is_for_business
             },
-            user.bills
+            bills
         ))
