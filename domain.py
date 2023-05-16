@@ -154,3 +154,10 @@ class BusinessSubCategory(SubCategory):
     fk_business_category: int | None
 
     depends_on_business_category: BusinessCategory
+
+
+@dataclass()
+class GroupPermissions:
+    pk_group_permission: int | None
+
+    permission_description: str

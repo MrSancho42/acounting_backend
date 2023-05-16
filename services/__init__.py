@@ -9,3 +9,4 @@ from .user_category import UserCategoryService
 from .business_category import BusinessCategoryService
 from .user_sub_category import UserSubCategoryService
 from .business_sub_category import BusinessSubCategoryService
+from .group_permissions import GroupPermissionsService

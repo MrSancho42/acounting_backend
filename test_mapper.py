@@ -15,7 +15,8 @@ from services import (
     UserCategoryService,
     BusinessCategoryService,
     BusinessSubCategoryService,
-    UserSubCategoryService
+    UserSubCategoryService,
+    GroupPermissionsService
 )
 
 
@@ -42,6 +43,11 @@ user_category_service = UserCategoryService(repository)
 business_category_service = BusinessCategoryService(repository)
 user_sub_category_service = UserSubCategoryService(repository)
 business_sub_category_service = BusinessSubCategoryService(repository)
+group_permissions_service = GroupPermissionsService(repository)
+
+group_permissions_service.create(
+    permission_description='admin'
+)
 
 # business_sub_category_service.create(
 #     from_business=business_service.read(1),
