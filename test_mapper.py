@@ -15,7 +15,21 @@ from services import (
     UserCategoryService,
     BusinessCategoryService,
     BusinessSubCategoryService,
-    UserSubCategoryService
+    UserSubCategoryService,
+    GroupPermissionService,
+    GroupService,
+    UserGroupPermissionService,
+    GroupRecordService,
+    GroupCategoryService,
+    GroupSubCategoryService,
+    UserBudgetByCategoryService,
+    UserBudgetBySubCategoryService,
+    GroupBudgetByCategoryService,
+    GroupBudgetBySubCategoryService,
+    UserBudgetService,
+    GroupBudgetService,
+    UserRecordBudgetService,
+    GroupRecordBudgetService
 )
 
 
@@ -42,6 +56,115 @@ user_category_service = UserCategoryService(repository)
 business_category_service = BusinessCategoryService(repository)
 user_sub_category_service = UserSubCategoryService(repository)
 business_sub_category_service = BusinessSubCategoryService(repository)
+group_permission_service = GroupPermissionService(repository)
+group_service = GroupService(repository)
+user_group_permission_service = UserGroupPermissionService(repository)
+group_record_service = GroupRecordService(repository)
+group_category_service = GroupCategoryService(repository)
+group_sub_category_service = GroupSubCategoryService(repository)
+user_budget_by_category_service = UserBudgetByCategoryService(repository)
+user_budget_by_sub_category_service = UserBudgetBySubCategoryService(repository)
+group_budget_by_category_service = GroupBudgetByCategoryService(repository)
+group_budget_by_sub_category_service = GroupBudgetBySubCategoryService(repository)
+user_budget_service = UserBudgetService(repository)
+group_budget_service = GroupBudgetService(repository)
+user_record_budget_service = UserRecordBudgetService(repository)
+group_record_budget_service = GroupRecordBudgetService(repository)
+
+
+# group_budget_by_sub_category_service.create(
+#     name='name',
+#     limit=10000,
+#     currency='USD',
+#     visibility_to=group_service.read(1),
+#     from_group_sub_category=group_sub_category_service.read(1)
+# )
+
+# group_budget_by_category_service.create(
+#     name='name',
+#     limit=10000,
+#     currency='USD',
+#     visibility_to=group_service.read(1),
+#     from_group_category=group_category_service.read(1)
+# )
+
+# group_category_service.create(
+#     from_group=group_service.read(1),
+#     name='name',
+#     ico='ico',
+#     colour='colour'
+# )
+#
+# group_sub_category_service.create(
+#     depends_on_group_category=group_category_service.read(1),
+#     name='name',
+#     ico='ico',
+#     colour='colour'
+# )
+
+
+# user_budget_by_sub_category_service.create(
+#     name='On sub food',
+#     limit=3000,
+#     currency='UAH',
+#     visibility_to=user_service.read(1),
+#     from_sub_category=user_sub_category_service.read(1)
+# )
+
+
+# user_sub_category_service.create(
+#     depends_on_user_category=user_category_service.read(1),
+#     name='sub category',
+#     colour='234567',
+#     ico='path to ico'
+# )
+
+
+# user_budget_by_category_service.create(
+#     name='On food',
+#     limit=3000,
+#     currency='UAH',
+#     visibility_to=user_service.read(1),
+#     from_category=user_category_service.read(1)
+# )
+
+# group_sub_category_service.create(
+#         depends_on_group_category=group_category_service.read(1),
+#         name='family fast food',
+#         ico='ico',
+#         colour='111111'
+# )
+
+# group_category_service.create(
+#     from_group=group_service.read(1),
+#     name='family food',
+#     ico='ico',
+#     colour='111111'
+# )
+
+# group_record_service.create(
+#     from_bill=bill_service.read(1),
+#     from_group=group_service.read(1),
+#     amount=34.3,
+#     description='Group rec',
+#     kind=RecordKinds.SPENDING
+# )
+
+
+# user_group_permission_service.create(
+#     permission_owner=user_service.read(1),
+#     permission_to=group_service.read(1),
+#     permission_granted=group_permission_service.read(1)
+# )
+
+# groups_service.create(
+#     name='friends',
+#     owner=user_service.read(1)
+# )
+
+# group_permission_service.create(
+#     permission_description='admin11'
+# )
 
 # business_sub_category_service.create(
 #     from_business=business_service.read(1),
@@ -57,7 +180,6 @@ business_sub_category_service = BusinessSubCategoryService(repository)
 
 # user_category_service.create(
 #     user_service.read(1),
-#     category_service.read(1),
 #     name='fastfood',
 #     colour='123456',
 #     ico='path'
@@ -100,9 +222,7 @@ business_sub_category_service = BusinessSubCategoryService(repository)
 #     name='Кредит',
 #     amount=2045.57,
 #     is_for_business=False,
-#     currency='USD',
-#     pk_bill=None,
-#     fk_user=None
+#     currency='USD'
 #     )
 #print(bill_service.read(1))
 #user = user_service.read(1)
