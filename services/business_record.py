@@ -35,3 +35,17 @@ class BusinessRecordService(BaseService):
 
     def delete(self):
         ...
+
+    def get_business_records(self, from_business: Business, from_bill: Bill | None = None):
+        records = list(filter(lambda record: not from_bill or record.from_bill == from_bill, from_business.records))
+        return list(map(
+            lambda record: {
+                'pk_record': record.pk_record,
+                'amount': record.amount,
+                'description': record.description,
+                'kind': record.kind,
+                'creation_time': record.creation_time,
+                'currency': record.currency,
+            },
+            records
+        ))
