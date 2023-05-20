@@ -19,7 +19,6 @@ class User:
 
     businesses: list = field(default_factory=list)
     bills: list = field(default_factory=list)
-    creates: list = field(default_factory=list)
     user_categories: list = field(default_factory=list)
 
 
