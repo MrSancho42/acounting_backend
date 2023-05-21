@@ -152,6 +152,8 @@ class Group:
 
     owner: User
 
+    records: list = field(default_factory=list)
+
 
 @dataclass()
 class UserGroupPermission:
@@ -165,14 +167,11 @@ class UserGroupPermission:
     permission_granted: GroupPermission
 
 
-@dataclass()
-class GroupRecord:
-    pk_group_record: int | None
+@dataclass
+class GroupRecord(Record):
     fk_group: int | None
-    fk_record: int | None
 
     from_group: Group
-    from_record: Record
 
 
 @dataclass()

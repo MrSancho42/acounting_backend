@@ -163,9 +163,15 @@ table_group_record = Table(
     'group_record',
     mapper_registry.metadata,
 
-    Column('pk_group_record', Integer, primary_key=True, autoincrement=True, nullable=False),
+    Column('amount', Float, nullable=False),
+    Column('description', String(255), nullable=True),
+    Column('kind', Enum(domain.RecordKinds), nullable=False),
+    Column('creation_time', DateTime, nullable=False),
+    Column('currency', String(5), nullable=False),
+
+    Column('pk_record', Integer, primary_key=True, autoincrement=True, nullable=False),
+    Column('fk_bill', Integer, ForeignKey('bill.pk_bill'), nullable=False),
     Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
-    Column('fk_record', Integer, ForeignKey('record.pk_record'), nullable=False),
 )
 
 
@@ -355,8 +361,8 @@ def mappers():
         domain.GroupRecord,
         table_group_record,
         properties={
-            'from_group': relationship(domain.Group, backref='records'),
-            'from_record': relationship(domain.Record, backref='groups')
+            'from_bill': relationship(domain.Bill, backref='group_records'),
+            'from_group': relationship(domain.Group, backref='records')
         },
     )
 
