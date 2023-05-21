@@ -8,13 +8,13 @@ from services import BillService
 class RecordService(BaseService):
 
     def create(
-            self,
-            from_bill: Bill,
-            amount: float,
-            description: str,
-            kind: RecordKinds,
-            creation_time: datetime = datetime.now(),
-            currency: str = 'UAH'
+        self,
+        from_bill: Bill,
+        amount: float,
+        description: str,
+        kind: RecordKinds,
+        creation_time: datetime = datetime.now(),
+        currency: str = 'UAH'
     ):
         self.repository.create(Record(
             from_bill=from_bill,
@@ -33,7 +33,7 @@ class RecordService(BaseService):
         elif kind == RecordKinds.INCOME:
             BillService.update(self, entity=from_bill, new_data={'amount': from_bill.amount + amount})
         elif kind == RecordKinds.TRANSFER:
-            ...
+            raise NotImplemented('TRANSFER not implemented yet.')
 
     def read(self, pk_record: int) -> Record:
         return self.repository.read(Record, lambda: Record.pk_record == pk_record)
@@ -48,8 +48,7 @@ class RecordService(BaseService):
             # add to records all user records
             user_bills = from_user.bills
             for bill in user_bills:
-                for item in bill.records:
-                    records.append(item)
+                records += bill.records
         elif from_bill:
             # add to records only bill records
             records = from_bill.records
