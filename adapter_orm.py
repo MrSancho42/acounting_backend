@@ -96,7 +96,7 @@ table_credit = Table(
     Column('due_date', DateTime, nullable=False),
 
     Column('pk_credit', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False)
+    Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
 )
 
 
@@ -110,6 +110,7 @@ table_user_category = Table(
 
     Column('pk_user_category', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
+    Column('fk_parent_category', Integer, ForeignKey('user_category.pk_user_category'), nullable=True),
 )
 
 
@@ -122,33 +123,8 @@ table_business_category = Table(
     Column('colour', String(6), nullable=False),
 
     Column('pk_business_category', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_business', Integer, ForeignKey('business.pk_business'), nullable=False)
-)
-
-
-table_user_sub_category = Table(
-    'user_sub_category',
-    mapper_registry.metadata,
-
-    Column('name', String(255), nullable=False),
-    Column('ico', String(255), nullable=False),
-    Column('colour', String(6), nullable=False),
-
-    Column('pk_user_sub_category', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_user_category', Integer, ForeignKey('user_category.pk_user_category'), nullable=False)
-)
-
-
-table_business_sub_category = Table(
-    'business_sub_category',
-    mapper_registry.metadata,
-
-    Column('name', String(255), nullable=False),
-    Column('ico', String(255), nullable=False),
-    Column('colour', String(6), nullable=False),
-
-    Column('pk_business_sub_category', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_business_category', Integer, ForeignKey('business_category.pk_business_category'), nullable=False)
+    Column('fk_business', Integer, ForeignKey('business.pk_business'), nullable=False),
+    Column('fk_parent_category', Integer, ForeignKey('business_category.pk_business_category'), nullable=True),
 )
 
 
@@ -157,7 +133,7 @@ table_group_permission = Table(
     mapper_registry.metadata,
 
     Column('permission_description', String(255), nullable=False, unique=True),
-    Column('pk_group_permission', Integer, primary_key=True, autoincrement=True, nullable=False)
+    Column('pk_group_permission', Integer, primary_key=True, autoincrement=True, nullable=False),
 )
 
 
@@ -168,7 +144,7 @@ table_group = Table(
     Column('name', String(255), nullable=False),
 
     Column('pk_group', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False)
+    Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
 )
 
 
@@ -179,7 +155,7 @@ table_user_group_permission = Table(
     Column('pk_user_group_permission', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
     Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
-    Column('fk_group_permission', Integer, ForeignKey('group_permission.pk_group_permission'), nullable=False)
+    Column('fk_group_permission', Integer, ForeignKey('group_permission.pk_group_permission'), nullable=False),
 )
 
 
@@ -189,7 +165,7 @@ table_group_record = Table(
 
     Column('pk_group_record', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
-    Column('fk_record', Integer, ForeignKey('record.pk_record'), nullable=False)
+    Column('fk_record', Integer, ForeignKey('record.pk_record'), nullable=False),
 )
 
 
@@ -202,20 +178,8 @@ table_group_category = Table(
     Column('colour', String(6), nullable=False),
 
     Column('pk_group_category', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False)
-)
-
-
-table_group_sub_category = Table(
-    'group_sub_category',
-    mapper_registry.metadata,
-
-    Column('name', String(255), nullable=False),
-    Column('ico', String(255), nullable=False),
-    Column('colour', String(6), nullable=False),
-
-    Column('pk_group_sub_category', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_group_category', Integer, ForeignKey('group_category.pk_group_category'), nullable=False)
+    Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
+    Column('fk_parent_category', Integer, ForeignKey('group_category.pk_group_category'), nullable=True)
 )
 
 
@@ -229,21 +193,7 @@ table_user_budget_by_category = Table(
 
     Column('pk_user_budget_by_category', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
-    Column('fk_user_category', Integer, ForeignKey('user_category.pk_user_category'), nullable=False)
-)
-
-
-table_user_budget_by_sub_category = Table(
-    'user_budget_by_sub_category',
-    mapper_registry.metadata,
-
-    Column('name', String(255), nullable=False),
-    Column('limit', Float, nullable=False),
-    Column('currency', String(5), nullable=False),
-
-    Column('pk_user_budget_by_sub_category', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
-    Column('fk_user_sub_category', Integer, ForeignKey('user_sub_category.pk_user_sub_category'), nullable=False)
+    Column('fk_user_category', Integer, ForeignKey('user_category.pk_user_category'), nullable=False),
 )
 
 
@@ -257,21 +207,7 @@ table_group_budget_by_category = Table(
 
     Column('pk_group_budget_by_category', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
-    Column('fk_group_category', Integer, ForeignKey('group_category.pk_group_category'), nullable=False)
-)
-
-
-table_group_budget_by_sub_category = Table(
-    'group_budget_by_sub_category',
-    mapper_registry.metadata,
-
-    Column('name', String(255), nullable=False),
-    Column('limit', Float, nullable=False),
-    Column('currency', String(5), nullable=False),
-
-    Column('pk_group_budget_by_sub_category', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
-    Column('fk_group_sub_category', Integer, ForeignKey('group_sub_category.pk_group_sub_category'), nullable=False)
+    Column('fk_group_category', Integer, ForeignKey('group_category.pk_group_category'), nullable=False),
 )
 
 
@@ -284,7 +220,7 @@ table_user_budget = Table(
     Column('currency', String(5), nullable=False),
 
     Column('pk_user_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False)
+    Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
 )
 
 
@@ -297,7 +233,7 @@ table_group_budget = Table(
     Column('currency', String(5), nullable=False),
 
     Column('pk_group_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False)
+    Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
 )
 
 
@@ -307,7 +243,7 @@ table_user_record_budget = Table(
 
     Column('pk_user_record_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
-    Column('fk_record', Integer, ForeignKey('record.pk_record'), nullable=False)
+    Column('fk_record', Integer, ForeignKey('record.pk_record'), nullable=False),
 )
 
 
@@ -317,7 +253,7 @@ table_group_record_budget = Table(
 
     Column('pk_group_record_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
-    Column('fk_record', Integer, ForeignKey('record.pk_record'), nullable=False)
+    Column('fk_record', Integer, ForeignKey('record.pk_record'), nullable=False),
 )
 
 
@@ -372,7 +308,12 @@ def mappers():
         domain.UserCategory,
         table_user_category,
         properties={
-            'from_user': relationship(domain.User, backref='user_categories')
+            'from_user': relationship(domain.User, backref='user_categories'),
+            'from_parent': relationship(
+                domain.UserCategory,
+                backref='child_categories',
+                remote_side=table_user_category.c.pk_user_category
+            )
         }
     )
 
@@ -380,23 +321,12 @@ def mappers():
         domain.BusinessCategory,
         table_business_category,
         properties={
-            'from_business': relationship(domain.Business, backref='business_categories')
-        }
-    )
-
-    mapper_registry.map_imperatively(
-        domain.UserSubCategory,
-        table_user_sub_category,
-        properties={
-            'depends_on_user_category': relationship(domain.UserCategory, backref='sub_categories')
-        }
-    )
-
-    mapper_registry.map_imperatively(
-        domain.BusinessSubCategory,
-        table_business_sub_category,
-        properties={
-            'depends_on_business_category': relationship(domain.BusinessCategory, backref='sub_categories')
+            'from_business': relationship(domain.Business, backref='business_categories'),
+            'from_parent': relationship(
+                domain.BusinessCategory,
+                backref='child_categories',
+                remote_side=table_business_category.c.pk_business_category
+            )
         }
     )
 
@@ -434,15 +364,12 @@ def mappers():
         domain.GroupCategory,
         table_group_category,
         properties={
-            'from_group': relationship(domain.Group, backref='groups_categories')
-        }
-    )
-
-    mapper_registry.map_imperatively(
-        domain.GroupSubCategory,
-        table_group_sub_category,
-        properties={
-            'depends_on_group_category': relationship(domain.GroupCategory, backref='sub_categories')
+            'from_group': relationship(domain.Group, backref='groups_categories'),
+            'from_parent': relationship(
+                domain.GroupCategory,
+                backref='child_categories',
+                remote_side=table_group_category.c.pk_group_category
+            )
         }
     )
 
@@ -456,29 +383,11 @@ def mappers():
     )
 
     mapper_registry.map_imperatively(
-        domain.UserBudgetBySubCategory,
-        table_user_budget_by_sub_category,
-        properties={
-            'visibility_to': relationship(domain.User, backref='budgets_by_sub_categories'),
-            'from_user_sub_category': relationship(domain.UserSubCategory, backref='related_user_budgets')
-        }
-    )
-
-    mapper_registry.map_imperatively(
         domain.GroupBudgetByCategory,
         table_group_budget_by_category,
         properties={
             'visibility_to': relationship(domain.Group, backref='budgets_by_categories'),
             'from_group_category': relationship(domain.GroupCategory, backref='related_group_budgets')
-        }
-    )
-
-    mapper_registry.map_imperatively(
-        domain.GroupBudgetBySubCategory,
-        table_group_budget_by_sub_category,
-        properties={
-            'visibility_to': relationship(domain.Group, backref='budgets_by_sub_categories'),
-            'from_group_sub_category': relationship(domain.GroupSubCategory, backref='related_user_budgets')
         }
     )
 

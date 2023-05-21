@@ -10,15 +10,18 @@ class BusinessCategoryService(BaseService):
         name: str,
         ico: str,
         colour: str,
+        from_parent: BusinessCategory | None = None
     ):
         self.repository.create(BusinessCategory(
+            from_business=from_business,
+            from_parent=from_parent,
             name=name,
             ico=ico,
             colour=colour,
-            from_business=from_business,
 
             pk_business_category=None,
-            fk_business=None
+            fk_business=None,
+            fk_parent_category=None
         ))
 
     def read(self, pk_business_category: int) -> BusinessCategory:

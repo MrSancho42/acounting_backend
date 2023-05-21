@@ -116,43 +116,24 @@ class Category:
 class UserCategory(Category):
     pk_user_category: int | None
     fk_user: int | None
+    fk_parent_category: int | None
 
     from_user: User
+    from_parent: Category
 
-    sub_categories: list = field(default_factory=list)
+    child_categories: list = field(default_factory=list)
 
 
 @dataclass()
 class BusinessCategory(Category):
     pk_business_category: int | None
     fk_business: int | None
+    fk_parent_category: int | None
 
     from_business: Business
+    from_parent: Category
 
-    sub_categories: list = field(default_factory=list)
-
-
-@dataclass()
-class SubCategory:
-    name: str
-    ico: str
-    colour: str
-
-
-@dataclass()
-class UserSubCategory(SubCategory):
-    pk_user_sub_category: int | None
-    fk_user_category: int | None
-
-    depends_on_user_category: UserCategory
-
-
-@dataclass()
-class BusinessSubCategory(SubCategory):
-    pk_business_sub_category: int | None
-    fk_business_category: int | None
-
-    depends_on_business_category: BusinessCategory
+    child_categories: list = field(default_factory=list)
 
 
 @dataclass()
@@ -198,18 +179,12 @@ class GroupRecord:
 class GroupCategory(Category):
     pk_group_category: int | None
     fk_group: int | None
+    fk_parent_category: int | None
 
     from_group: Group
+    from_parent: Category
 
-    sub_categories: list = field(default_factory=list)
-
-
-@dataclass()
-class GroupSubCategory(Category):
-    pk_group_sub_category: int | None
-    fk_group_category: int | None
-
-    depends_on_group_category: GroupCategory
+    child_categories: list = field(default_factory=list)
 
 
 @dataclass()
@@ -230,32 +205,12 @@ class UserBudgetByCategory(Budget):
 
 
 @dataclass()
-class UserBudgetBySubCategory(Budget):
-    pk_user_budget_by_sub_category: int | None
-    fk_user: int | None
-    fk_user_sub_category: int | None
-
-    from_user_sub_category: UserSubCategory
-    visibility_to: User
-
-
-@dataclass()
 class GroupBudgetByCategory(Budget):
     pk_group_budget_by_category: int | None
     fk_group: int | None
     fk_group_category: int | None
 
     from_group_category: GroupCategory
-    visibility_to: Group
-
-
-@dataclass()
-class GroupBudgetBySubCategory(Budget):
-    pk_group_budget_by_sub_category: int | None
-    fk_group: int | None
-    fk_group_sub_category: int | None
-
-    from_group_sub_category: GroupSubCategory
     visibility_to: Group
 
 

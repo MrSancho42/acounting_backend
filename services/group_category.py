@@ -10,15 +10,18 @@ class GroupCategoryService(BaseService):
         name: str,
         ico: str,
         colour: str,
+        from_parent: GroupCategory | None = None
     ):
         self.repository.create(GroupCategory(
+            from_group=from_group,
+            from_parent=from_parent,
             name=name,
             ico=ico,
             colour=colour,
-            from_group=from_group,
 
             pk_group_category=None,
-            fk_group=None
+            fk_group=None,
+            fk_parent_category=None
         ))
 
     def read(self, pk_group_category: int) -> GroupCategory:
