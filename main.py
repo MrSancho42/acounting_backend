@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api import (
-    user, business, bill, business_record
+    user, business, bill, business_record, record
 )
 
 origins = [
@@ -25,3 +25,4 @@ app.include_router(user.router)
 app.include_router(business.router)
 app.include_router(bill.router)
 app.include_router(business_record.router)
+app.include_router(record.router)
