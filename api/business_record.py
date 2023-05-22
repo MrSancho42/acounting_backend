@@ -4,7 +4,9 @@ from typing import Annotated
 from fastapi import APIRouter, Body, HTTPException, status
 from pydantic import BaseModel, Field
 
-from services_manager import user_service, business_service, business_record_service, bill_service
+from services_manager import (
+    user_service, business_service, business_record_service, bill_service, business_category_service
+)
 from domain import RecordKinds
 
 router = APIRouter(
@@ -30,6 +32,7 @@ class GetBusinessRecord(BusinessRecord):
 async def create(
     pk_bill: Annotated[int, Body(embed=True)],
     pk_business: Annotated[int, Body(embed=True)],
+    pk_category: Annotated[int, Body(embed=True)],
     business_record: BusinessRecord
 ):
     bill = bill_service.read(pk_bill)
@@ -37,6 +40,7 @@ async def create(
     business_record_service.create(
         from_bill=bill,
         from_business=business,
+        from_business_category=business_category_service.read(1),
         **business_record.dict()
     )
 
