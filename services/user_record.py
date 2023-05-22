@@ -1,23 +1,25 @@
 from datetime import datetime
 
-from domain import Bill, Record, RecordKinds, User
+from domain import Bill, UserRecord, RecordKinds, User, UserCategory
 from services.base_service import BaseService
 from services import BillService
 
 
-class RecordService(BaseService):
+class UserRecordService(BaseService):
 
     def create(
         self,
         from_bill: Bill,
+        from_user_category: UserCategory,
         amount: float,
         description: str,
         kind: RecordKinds,
         creation_time: datetime = datetime.now(),
         currency: str = 'UAH'
     ):
-        self.repository.create(Record(
+        self.repository.create(UserRecord(
             from_bill=from_bill,
+            from_user_category=from_user_category,
             amount=amount,
             description=description,
             kind=kind,
@@ -25,7 +27,8 @@ class RecordService(BaseService):
             currency=currency,
 
             pk_record=None,
-            fk_bill=None
+            fk_bill=None,
+            fk_category=None
         ))
 
         if kind == RecordKinds.SPENDING:
@@ -35,8 +38,8 @@ class RecordService(BaseService):
         elif kind == RecordKinds.TRANSFER:
             raise NotImplemented('TRANSFER not implemented yet.')
 
-    def read(self, pk_record: int) -> Record:
-        return self.repository.read(Record, lambda: Record.pk_record == pk_record)
+    def read(self, pk_record: int) -> UserRecord:
+        return self.repository.read(UserRecord, lambda: UserRecord.pk_record == pk_record)
 
     def delete(self):
         ...

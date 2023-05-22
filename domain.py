@@ -65,6 +65,7 @@ class Bill:
 class Record:
     pk_record: int | None
     fk_bill: int | None
+    fk_category: int | None
 
     amount: float
     description: str
@@ -73,13 +74,6 @@ class Record:
     currency: str
 
     from_bill: Bill
-
-
-@dataclass
-class BusinessRecord(Record):
-    fk_business: int | None
-
-    from_business: Business
 
 
 @dataclass()
@@ -125,6 +119,11 @@ class UserCategory(Category):
 
 
 @dataclass()
+class UserRecord(Record):
+    from_user_category: UserCategory
+
+
+@dataclass()
 class BusinessCategory(Category):
     pk_business_category: int | None
     fk_business: int | None
@@ -134,6 +133,14 @@ class BusinessCategory(Category):
     from_parent: Category
 
     child_categories: list = field(default_factory=list)
+
+
+@dataclass()
+class BusinessRecord(Record):
+    fk_business: int | None
+
+    from_business: Business
+    from_business_category: BusinessCategory
 
 
 @dataclass()
@@ -167,13 +174,6 @@ class UserGroupPermission:
     permission_granted: GroupPermission
 
 
-@dataclass
-class GroupRecord(Record):
-    fk_group: int | None
-
-    from_group: Group
-
-
 @dataclass()
 class GroupCategory(Category):
     pk_group_category: int | None
@@ -184,6 +184,14 @@ class GroupCategory(Category):
     from_parent: Category
 
     child_categories: list = field(default_factory=list)
+
+
+@dataclass
+class GroupRecord(Record):
+    fk_group: int | None
+
+    from_group: Group
+    from_group_category: GroupCategory
 
 
 @dataclass()

@@ -44,8 +44,8 @@ table_bill = Table(
 )
 
 
-table_record = Table(
-    'record',
+table_user_record = Table(
+    'user_record',
     mapper_registry.metadata,
 
     Column('amount', Float, nullable=False),
@@ -56,6 +56,7 @@ table_record = Table(
 
     Column('pk_record', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_bill', Integer, ForeignKey('bill.pk_bill'), nullable=False),
+    Column('fk_category', Integer, ForeignKey('user_category.pk_user_category'), nullable=False),
 )
 
 
@@ -72,6 +73,7 @@ table_business_record = Table(
     Column('pk_record', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_bill', Integer, ForeignKey('bill.pk_bill'), nullable=False),
     Column('fk_business', Integer, ForeignKey('business.pk_business'), nullable=False),
+    Column('fk_category', Integer, ForeignKey('business_category.pk_business_category'), nullable=False),
 )
 
 
@@ -172,6 +174,7 @@ table_group_record = Table(
     Column('pk_record', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_bill', Integer, ForeignKey('bill.pk_bill'), nullable=False),
     Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
+    Column('fk_category', Integer, ForeignKey('group_category.pk_group_category'), nullable=False),
 )
 
 
@@ -249,7 +252,7 @@ table_user_record_budget = Table(
 
     Column('pk_user_record_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
-    Column('fk_record', Integer, ForeignKey('record.pk_record'), nullable=False),
+    Column('fk_user_record', Integer, ForeignKey('user_record.pk_record'), nullable=False),
 )
 
 
@@ -259,7 +262,7 @@ table_group_record_budget = Table(
 
     Column('pk_group_record_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
-    Column('fk_record', Integer, ForeignKey('record.pk_record'), nullable=False),
+    Column('fk_record', Integer, ForeignKey('group_record.pk_record'), nullable=False),
 )
 
 
@@ -282,9 +285,12 @@ def mappers():
     )
 
     mapper_registry.map_imperatively(
-        domain.Record,
-        table_record,
-        properties={'from_bill': relationship(domain.Bill, backref='records')}
+        domain.UserRecord,
+        table_user_record,
+        properties={
+            'from_bill': relationship(domain.Bill, backref='records'),
+            'from_user_category': relationship(domain.UserCategory, backref='records'),
+        },
     )
 
     mapper_registry.map_imperatively(
@@ -292,7 +298,8 @@ def mappers():
         table_business_record,
         properties={
             'from_bill': relationship(domain.Bill, backref='business_records'),
-            'from_business': relationship(domain.Business, backref='records')
+            'from_business': relationship(domain.Business, backref='records'),
+            'from_business_category': relationship(domain.BusinessCategory, backref='records'),
         },
     )
 
@@ -362,7 +369,8 @@ def mappers():
         table_group_record,
         properties={
             'from_bill': relationship(domain.Bill, backref='group_records'),
-            'from_group': relationship(domain.Group, backref='records')
+            'from_group': relationship(domain.Group, backref='records'),
+            'from_group_category': relationship(domain.GroupCategory, backref='records'),
         },
     )
 
@@ -417,7 +425,7 @@ def mappers():
         domain.UserRecordBudget,
         table_user_record_budget,
         properties={
-            'from_record': relationship(domain.Record, backref='related_budget_user'),
+            'from_user_record': relationship(domain.UserRecord, backref='related_budget_user'),
             'from_user': relationship(domain.User, backref='related_budget_record')
         }
     )
@@ -426,7 +434,7 @@ def mappers():
         domain.GroupRecordBudget,
         table_group_record_budget,
         properties={
-            'from_record': relationship(domain.Record, backref='related_budget_group'),
+            'from_group_record': relationship(domain.GroupRecord, backref='related_budget_group'),
             'from_group': relationship(domain.Group, backref='related_budget_record')
         }
     )

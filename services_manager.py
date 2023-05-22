@@ -5,7 +5,7 @@ import adapter_orm
 import secrets
 from repository import SqlAlchemyRepository
 from services import (
-    BillService, BusinessRecordService, BusinessService, UserService, RecordService
+    BillService, BusinessRecordService, BusinessService, UserService, UserRecordService
 )
 
 engine = sqlalchemy.create_engine(
@@ -24,4 +24,4 @@ user_service = UserService(repository)
 business_service = BusinessService(repository)
 bill_service = BillService(repository)
 business_record_service = BusinessRecordService(repository)
-record_service = RecordService(repository)
+user_record_service = UserRecordService(repository)
