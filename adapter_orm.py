@@ -378,7 +378,7 @@ def mappers():
         domain.GroupCategory,
         table_group_category,
         properties={
-            'from_group': relationship(domain.Group, backref='groups_categories'),
+            'from_group': relationship(domain.Group, backref='group_categories'),
             'from_parent': relationship(
                 domain.GroupCategory,
                 backref='child_categories',

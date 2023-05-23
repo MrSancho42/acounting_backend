@@ -32,3 +32,18 @@ class GroupCategoryService(BaseService):
 
     def delete(self):
         ...
+
+    def get_group_categories(self, from_group: Group):
+        # returns all group categories by group
+        group_categories = from_group.group_categories
+
+        return list(map(
+            lambda group_category: {
+                'pk_group_category': group_category.pk_group_category,
+                'name': group_category.name,
+                'ico': group_category.ico,
+                'colour': group_category.colour,
+                'fk_parent_category': group_category.fk_parent_category
+            },
+            group_categories
+        ))

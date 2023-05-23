@@ -1,11 +1,9 @@
-from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Body, status
 from pydantic import BaseModel
 
 from services_manager import user_service, user_category_service
-from domain import UserCategory
 
 router = APIRouter(
     prefix='/user-category-services',

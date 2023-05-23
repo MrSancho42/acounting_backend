@@ -160,6 +160,7 @@ class Group:
     owner: User
 
     records: list = field(default_factory=list)
+    group_categories: list = field(default_factory=list)
 
 
 @dataclass()

@@ -39,8 +39,8 @@ class GroupRecordService(BaseService):
     def delete(self):
         ...
 
-    def get_group_records(self, from_group: Group, from_bill: Bill | None = None):
-        records = list(filter(lambda record: not from_bill or record.from_bill == from_bill, from_group.records))
+    def get_group_records(self, from_group: Group):
+        records = from_group.records
         return list(map(
             lambda record: {
                 'pk_record': record.pk_record,

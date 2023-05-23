@@ -12,6 +12,7 @@ class BusinessCategoryService(BaseService):
         colour: str,
         from_parent: BusinessCategory | None = None
     ):
+        print('business category services')
         self.repository.create(BusinessCategory(
             from_business=from_business,
             from_parent=from_parent,
@@ -32,3 +33,18 @@ class BusinessCategoryService(BaseService):
 
     def delete(self):
         ...
+
+    def get_business_categories(self, from_business: Business):
+        # returns all business categories by business
+        business_categories = from_business.business_categories
+
+        return list(map(
+            lambda business_category: {
+                'pk_business_category': business_category.pk_business_category,
+                'name': business_category.name,
+                'ico': business_category.ico,
+                'colour': business_category.colour,
+                'fk_parent_category': business_category.fk_parent_category
+            },
+            business_categories
+        ))
