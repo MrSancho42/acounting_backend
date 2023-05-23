@@ -29,3 +29,18 @@ class UserCategoryService(BaseService):
 
     def delete(self):
         ...
+
+    def get_user_categories(self, from_user: User):
+        # returns all user categories by user
+        user_categories = from_user.user_categories
+
+        return list(map(
+            lambda user_category: {
+                'pk_user_category': user_category.pk_user_category,
+                'name': user_category.name,
+                'ico': user_category.ico,
+                'colour': user_category.colour,
+                'fk_parent_category': user_category.fk_parent_category
+            },
+            user_categories
+        ))

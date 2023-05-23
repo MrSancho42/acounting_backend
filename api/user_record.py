@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, Body, status
 from pydantic import BaseModel
 
-from services_manager import user_record_service, bill_service, user_service, user_category
-from domain import RecordKinds, UserCategory
+from services_manager import user_record_service, bill_service, user_service, user_category_service
+from domain import RecordKinds
 
 router = APIRouter(
     prefix='/record-services',
@@ -33,7 +33,7 @@ async def create(
     record: UserRecord
 ):
     bill = bill_service.read(pk_bill)
-    category = user_category.read(pk_category)
+    category = user_category_service.read(pk_category)
     user_record_service.create(
         from_bill=bill,
         from_user_category=category,
