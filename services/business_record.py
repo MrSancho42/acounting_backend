@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from domain import Bill, BusinessRecord, RecordKinds, Business
+from domain import Bill, BusinessRecord, RecordKinds, Business, BusinessCategory
 from services.base_service import BaseService
+from services import BillService
 
 
 class BusinessRecordService(BaseService):
@@ -10,6 +11,7 @@ class BusinessRecordService(BaseService):
         self,
         from_bill: Bill,
         from_business: Business,
+        from_business_category: BusinessCategory,
         amount: float,
         description: str,
         kind: RecordKinds,
@@ -19,6 +21,7 @@ class BusinessRecordService(BaseService):
         self.repository.create(BusinessRecord(
             from_bill=from_bill,
             from_business=from_business,
+            from_business_category=from_business_category,
             amount=amount,
             description=description,
             kind=kind,
@@ -28,7 +31,15 @@ class BusinessRecordService(BaseService):
             pk_record=None,
             fk_bill=None,
             fk_business=None,
+            fk_category=None
         ))
+
+        if kind == RecordKinds.SPENDING:
+            BillService.update(self, entity=from_bill, new_data={'amount': from_bill.amount - amount})
+        elif kind == RecordKinds.INCOME:
+            BillService.update(self, entity=from_bill, new_data={'amount': from_bill.amount + amount})
+        elif kind == RecordKinds.TRANSFER:
+            raise NotImplemented('TRANSFER not implemented yet.')
 
     def read(self, pk_record: int) -> BusinessRecord:
         return self.repository.read(BusinessRecord, lambda: BusinessRecord.pk_record == pk_record)

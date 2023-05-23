@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from domain import GroupRecord, Record, Group
+from domain import GroupRecord, Record, Group, Bill, RecordKinds, GroupCategory
 from services.base_service import BaseService
 
 
@@ -8,16 +8,29 @@ class GroupRecordService(BaseService):
 
     def create(
         self,
+        from_bill: Bill,
         from_group: Group,
-        from_record: Record,
+        from_group_category: GroupCategory,
+        amount: float,
+        description: str,
+        kind: RecordKinds,
+        creation_time: datetime = datetime.now(),
+        currency: str = 'UAH',
     ):
         self.repository.create(GroupRecord(
+            from_bill=from_bill,
             from_group=from_group,
-            from_record=from_record,
+            from_group_category=from_group_category,
+            amount=amount,
+            description=description,
+            kind=kind,
+            creation_time=creation_time,
+            currency=currency,
 
-            pk_group_record=None,
-            fk_record=None,
-            fk_group=None
+            pk_record=None,
+            fk_bill=None,
+            fk_group=None,
+            fk_category=None
         ))
 
     def read(self, pk_record: int) -> GroupRecord:
@@ -25,3 +38,17 @@ class GroupRecordService(BaseService):
 
     def delete(self):
         ...
+
+    def get_group_records(self, from_group: Group):
+        records = from_group.records
+        return list(map(
+            lambda record: {
+                'pk_record': record.pk_record,
+                'amount': record.amount,
+                'description': record.description,
+                'kind': record.kind,
+                'creation_time': record.creation_time,
+                'currency': record.currency,
+            },
+            records
+        ))

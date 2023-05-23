@@ -10,15 +10,18 @@ class GroupCategoryService(BaseService):
         name: str,
         ico: str,
         colour: str,
+        from_parent: GroupCategory | None = None
     ):
         self.repository.create(GroupCategory(
+            from_group=from_group,
+            from_parent=from_parent,
             name=name,
             ico=ico,
             colour=colour,
-            from_group=from_group,
 
             pk_group_category=None,
-            fk_group=None
+            fk_group=None,
+            fk_parent_category=None
         ))
 
     def read(self, pk_group_category: int) -> GroupCategory:
@@ -29,3 +32,18 @@ class GroupCategoryService(BaseService):
 
     def delete(self):
         ...
+
+    def get_group_categories(self, from_group: Group):
+        # returns all group categories by group
+        group_categories = from_group.group_categories
+
+        return list(map(
+            lambda group_category: {
+                'pk_group_category': group_category.pk_group_category,
+                'name': group_category.name,
+                'ico': group_category.ico,
+                'colour': group_category.colour,
+                'fk_parent_category': group_category.fk_parent_category
+            },
+            group_categories
+        ))
