@@ -12,7 +12,6 @@ class BusinessCategoryService(BaseService):
         colour: str,
         from_parent: BusinessCategory | None = None
     ):
-        print('business category services')
         self.repository.create(BusinessCategory(
             from_business=from_business,
             from_parent=from_parent,

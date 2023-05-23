@@ -28,12 +28,10 @@ async def create(
     business_category: BusinessCategoryModel,
     pk_category: Annotated[int, Body(embed=True)] | None = None
 ):
-    print(pk_category)
     business = business_service.read(pk_business)
     parent = None
     if pk_category:
         parent = business_category_service.read(pk_category)
-    print(parent)
     business_category_service.create(
         from_business=business,
         from_parent=parent,
