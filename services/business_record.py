@@ -2,6 +2,7 @@ from datetime import datetime
 
 from domain import Bill, BusinessRecord, RecordKinds, Business, BusinessCategory
 from services.base_service import BaseService
+from services import BillService
 
 
 class BusinessRecordService(BaseService):
@@ -32,6 +33,13 @@ class BusinessRecordService(BaseService):
             fk_business=None,
             fk_category=None
         ))
+
+        if kind == RecordKinds.SPENDING:
+            BillService.update(self, entity=from_bill, new_data={'amount': from_bill.amount - amount})
+        elif kind == RecordKinds.INCOME:
+            BillService.update(self, entity=from_bill, new_data={'amount': from_bill.amount + amount})
+        elif kind == RecordKinds.TRANSFER:
+            raise NotImplemented('TRANSFER not implemented yet.')
 
     def read(self, pk_record: int) -> BusinessRecord:
         return self.repository.read(BusinessRecord, lambda: BusinessRecord.pk_record == pk_record)

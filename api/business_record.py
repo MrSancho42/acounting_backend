@@ -44,8 +44,6 @@ async def create(
         **business_record.dict()
     )
 
-# TODO: on create record edit bill amount
-
 
 @router.get('/get-business-records', response_model=list[GetBusinessRecord])
 async def get_business_records(pk_business: int, pk_bill: int | None = None):

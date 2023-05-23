@@ -234,11 +234,21 @@ business_category_service.create(
 ########################################################################################################################
 # create business records
 business_record_service.create(
-    from_bill=bill_service.read(3),
+    from_bill=bill_service.read(4),
     from_business=business_service.read(1),
     amount=1000,
     description='Покупка кавоварок',
     kind=RecordKinds.SPENDING,
+    currency='UAH',
+    from_business_category=business_category_service.read(1)
+)
+
+business_record_service.create(
+    from_bill=bill_service.read(4),
+    from_business=business_service.read(1),
+    amount=70,
+    description='Продаж кави',
+    kind=RecordKinds.INCOME,
     currency='UAH',
     from_business_category=business_category_service.read(1)
 )
