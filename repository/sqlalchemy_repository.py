@@ -13,6 +13,7 @@ class SqlAlchemyRepository:
         try:
             self.session.add(entity)
             self.session.commit()
+            return entity
         except exc.IntegrityError:
             self.session.rollback()
             raise UserException.MailAlreadyInUse

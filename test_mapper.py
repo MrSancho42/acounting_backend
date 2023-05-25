@@ -2,7 +2,7 @@ import sqlalchemy.orm
 
 import adapter_orm
 import secrets
-from domain import RecordKinds
+from domain import RecordKinds, BudgetKinds
 from repository import SqlAlchemyRepository
 from services import (
     UserService,
@@ -19,12 +19,8 @@ from services import (
     UserGroupPermissionService,
     GroupRecordService,
     GroupCategoryService,
-    UserBudgetByCategoryService,
-    GroupBudgetByCategoryService,
     UserBudgetService,
-    GroupBudgetService,
-    UserRecordBudgetService,
-    GroupRecordBudgetService
+    GroupBudgetService
 )
 
 
@@ -55,12 +51,8 @@ group_service = GroupService(repository)
 user_group_permission_service = UserGroupPermissionService(repository)
 group_record_service = GroupRecordService(repository)
 group_category_service = GroupCategoryService(repository)
-user_budget_by_category_service = UserBudgetByCategoryService(repository)
-group_budget_by_category_service = GroupBudgetByCategoryService(repository)
 user_budget_service = UserBudgetService(repository)
 group_budget_service = GroupBudgetService(repository)
-user_record_budget_service = UserRecordBudgetService(repository)
-group_record_budget_service = GroupRecordBudgetService(repository)
 
 ########################################################################################################################
 # create users
@@ -284,4 +276,39 @@ group_record_service.create(
     kind=RecordKinds.SPENDING,
     currency='UAH',
     from_group_category=group_category_service.read(2)
+)
+########################################################################################################################
+# create user budgets by category and by record
+
+user_budget_service.create(
+    name='test1',
+    limit=100,
+    currency='uah',
+    kind=BudgetKinds.BY_CATEGORY,
+    from_user=user_service.read(1),
+    from_category=user_category_service.read(1)
+)
+user_budget_service.create(
+    name='test2',
+    limit=1050,
+    currency='uah',
+    kind=BudgetKinds.BY_RECORD,
+    from_user=user_service.read(1)
+)
+########################################################################################################################
+# create group budgets by category and by record
+group_budget_service.create(
+    name='group test1',
+    limit=100,
+    currency='uah',
+    kind=BudgetKinds.BY_CATEGORY,
+    from_group=group_service.read(1),
+    from_category=group_category_service.read(1)
+)
+group_budget_service.create(
+    name='group test2',
+    limit=1050,
+    currency='uah',
+    kind=BudgetKinds.BY_RECORD,
+    from_group=group_service.read(1)
 )
