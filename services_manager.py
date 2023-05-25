@@ -6,7 +6,8 @@ import secrets
 from repository import SqlAlchemyRepository
 from services import (
     BillService, BusinessRecordService, BusinessService, UserService, UserRecordService, UserCategoryService,
-    BusinessCategoryService, GroupService, GroupCategoryService, GroupRecordService
+    BusinessCategoryService, GroupService, GroupCategoryService, GroupRecordService, UserBudgetService,
+    GroupBudgetService
 )
 
 engine = sqlalchemy.create_engine(
@@ -31,3 +32,6 @@ user_category_service = UserCategoryService(repository)
 group_service = GroupService(repository)
 group_category_service = GroupCategoryService(repository)
 group_record_service = GroupRecordService(repository)
+user_category_budget_service = UserBudgetService(repository)
+user_budget_service = UserBudgetService(repository)
+group_budget_service = GroupBudgetService(repository)

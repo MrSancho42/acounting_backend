@@ -192,34 +192,6 @@ table_group_category = Table(
 )
 
 
-table_user_budget_by_category = Table(
-    'user_budget_by_category',
-    mapper_registry.metadata,
-
-    Column('name', String(255), nullable=False),
-    Column('limit', Float, nullable=False),
-    Column('currency', String(5), nullable=False),
-
-    Column('pk_user_budget_by_category', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
-    Column('fk_user_category', Integer, ForeignKey('user_category.pk_user_category'), nullable=False),
-)
-
-
-table_group_budget_by_category = Table(
-    'group_budget_by_category',
-    mapper_registry.metadata,
-
-    Column('name', String(255), nullable=False),
-    Column('limit', Float, nullable=False),
-    Column('currency', String(5), nullable=False),
-
-    Column('pk_group_budget_by_category', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
-    Column('fk_group_category', Integer, ForeignKey('group_category.pk_group_category'), nullable=False),
-)
-
-
 table_user_budget = Table(
     'user_budget',
     mapper_registry.metadata,
@@ -227,6 +199,7 @@ table_user_budget = Table(
     Column('name', String(255), nullable=False),
     Column('limit', Float, nullable=False),
     Column('currency', String(5), nullable=False),
+    Column('kind', Enum(domain.BudgetKinds), nullable=False),
 
     Column('pk_user_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
@@ -240,6 +213,7 @@ table_group_budget = Table(
     Column('name', String(255), nullable=False),
     Column('limit', Float, nullable=False),
     Column('currency', String(5), nullable=False),
+    Column('kind', Enum(domain.BudgetKinds), nullable=False),
 
     Column('pk_group_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
@@ -251,7 +225,7 @@ table_user_record_budget = Table(
     mapper_registry.metadata,
 
     Column('pk_user_record_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
+    Column('fk_user_budget', Integer, ForeignKey('user_budget.pk_user_budget'), nullable=False),
     Column('fk_user_record', Integer, ForeignKey('user_record.pk_record'), nullable=False),
 )
 
@@ -261,8 +235,26 @@ table_group_record_budget = Table(
     mapper_registry.metadata,
 
     Column('pk_group_record_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column('fk_group', Integer, ForeignKey('group.pk_group'), nullable=False),
+    Column('fk_group_budget', Integer, ForeignKey('group_budget.pk_group_budget'), nullable=False),
     Column('fk_record', Integer, ForeignKey('group_record.pk_record'), nullable=False),
+)
+
+table_user_category_budget = Table(
+    'user_category_budget',
+    mapper_registry.metadata,
+
+    Column('pk_user_category_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
+    Column('fk_user_budget', Integer, ForeignKey('user_budget.pk_user_budget'), nullable=False),
+    Column('fk_user_category', Integer, ForeignKey('user_category.pk_user_category'), nullable=False),
+)
+
+table_group_category_budget = Table(
+    'group_category_budget',
+    mapper_registry.metadata,
+
+    Column('pk_group_category_budget', Integer, primary_key=True, autoincrement=True, nullable=False),
+    Column('fk_group_budget', Integer, ForeignKey('group_budget.pk_group_budget'), nullable=False),
+    Column('fk_group_category', Integer, ForeignKey('group_category.pk_group_category'), nullable=False),
 )
 
 
@@ -388,28 +380,10 @@ def mappers():
     )
 
     mapper_registry.map_imperatively(
-        domain.UserBudgetByCategory,
-        table_user_budget_by_category,
-        properties={
-            'visibility_to': relationship(domain.User, backref='budgets_by_categories'),
-            'from_user_category': relationship(domain.UserCategory, backref='related_user_budgets')
-        }
-    )
-
-    mapper_registry.map_imperatively(
-        domain.GroupBudgetByCategory,
-        table_group_budget_by_category,
-        properties={
-            'visibility_to': relationship(domain.Group, backref='budgets_by_categories'),
-            'from_group_category': relationship(domain.GroupCategory, backref='related_group_budgets')
-        }
-    )
-
-    mapper_registry.map_imperatively(
         domain.UserBudget,
         table_user_budget,
         properties={
-            'from_user': relationship(domain.User, backref='related_user_budgets')
+            'from_user': relationship(domain.User, backref='user_budgets')
         }
     )
 
@@ -417,7 +391,7 @@ def mappers():
         domain.GroupBudget,
         table_group_budget,
         properties={
-            'from_group': relationship(domain.Group, backref='related_group_budgets')
+            'from_group': relationship(domain.Group, backref='group_budgets')
         }
     )
 
@@ -426,7 +400,7 @@ def mappers():
         table_user_record_budget,
         properties={
             'from_user_record': relationship(domain.UserRecord, backref='related_budget_user'),
-            'from_user': relationship(domain.User, backref='related_budget_record')
+            'from_user_budget': relationship(domain.UserBudget, backref='related_budget_record')
         }
     )
 
@@ -435,6 +409,24 @@ def mappers():
         table_group_record_budget,
         properties={
             'from_group_record': relationship(domain.GroupRecord, backref='related_budget_group'),
-            'from_group': relationship(domain.Group, backref='related_budget_record')
+            'from_group_budget': relationship(domain.GroupBudget, backref='related_budget_record')
+        }
+    )
+
+    mapper_registry.map_imperatively(
+        domain.UserCategoryBudget,
+        table_user_category_budget,
+        properties={
+            'from_user_budget': relationship(domain.UserBudget, backref='related_budget_category'),
+            'from_user_category': relationship(domain.UserCategory, backref='related_budget')
+        }
+    )
+
+    mapper_registry.map_imperatively(
+        domain.GroupCategoryBudget,
+        table_group_category_budget,
+        properties={
+            'from_group_budget': relationship(domain.GroupBudget, backref='related_budget_category'),
+            'from_group_category': relationship(domain.GroupCategory, backref='related_budget')
         }
     )

@@ -9,6 +9,11 @@ class RecordKinds(Enum):
     TRANSFER = 'TRANSFER'
 
 
+class BudgetKinds(Enum):
+    BY_CATEGORY = 'BY_CATEGORY'
+    BY_RECORD = 'BY_RECORD'
+
+
 @dataclass
 class User:
     pk_user: int | None
@@ -20,6 +25,7 @@ class User:
     businesses: list = field(default_factory=list)
     bills: list = field(default_factory=list)
     user_categories: list = field(default_factory=list)
+    user_budgets: list = field(default_factory=list)
 
 
 class UserException:
@@ -161,6 +167,7 @@ class Group:
 
     records: list = field(default_factory=list)
     group_categories: list = field(default_factory=list)
+    group_budgets: list = field(default_factory=list)
 
 
 @dataclass()
@@ -200,26 +207,7 @@ class Budget:
     name: str
     limit: float
     currency: str
-
-
-@dataclass()
-class UserBudgetByCategory(Budget):
-    pk_user_budget_by_category: int | None
-    fk_user: int | None
-    fk_user_category: int | None
-
-    from_user_category: UserCategory
-    visibility_to: User
-
-
-@dataclass()
-class GroupBudgetByCategory(Budget):
-    pk_group_budget_by_category: int | None
-    fk_group: int | None
-    fk_group_category: int | None
-
-    from_group_category: GroupCategory
-    visibility_to: Group
+    kind: BudgetKinds
 
 
 @dataclass()
@@ -241,18 +229,38 @@ class GroupBudget(Budget):
 @dataclass()
 class UserRecordBudget:
     pk_user_record_budget: int | None
-    fk_user: int | None
+    fk_user_budget: int | None
     fk_record: int | None
 
-    from_user: User
-    from_record: Record
+    from_user_budget: UserBudget
+    from_record: UserRecord
 
 
 @dataclass()
 class GroupRecordBudget:
     pk_group_record_budget: int | None
-    fk_group: int | None
+    fk_group_budget: int | None
     fk_record: int | None
 
-    from_group: Group
-    from_record: Record
+    from_group_budget: GroupBudget
+    from_record: GroupRecord
+
+
+@dataclass()
+class UserCategoryBudget:
+    pk_user_category_budget: int | None
+    fk_user_budget: int | None
+    fk_user_category: int | None
+
+    from_user_budget: UserBudget
+    from_user_category: UserCategory
+
+
+@dataclass()
+class GroupCategoryBudget:
+    pk_group_category_budget: int | None
+    fk_group_budget: int | None
+    fk_group_category: int | None
+
+    from_group_budget: GroupBudget
+    from_group_category: GroupCategory
