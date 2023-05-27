@@ -24,6 +24,9 @@ table_business = Table(
     mapper_registry.metadata,
 
     Column('name', String(255), nullable=False),
+    Column('owner_name', String(255), nullable=False),
+    Column('taxpayer_account_card', String(255), nullable=False),
+    Column('address', String(255), nullable=False),
 
     Column('pk_business', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_user', Integer, ForeignKey('user.pk_user'), nullable=False),
@@ -69,6 +72,7 @@ table_business_record = Table(
     Column('kind', Enum(domain.RecordKinds), nullable=False),
     Column('creation_time', DateTime, nullable=False),
     Column('currency', String(5), nullable=False),
+    Column('sub_kind', Enum(domain.RecordSubKinds), nullable=False),
 
     Column('pk_record', Integer, primary_key=True, autoincrement=True, nullable=False),
     Column('fk_bill', Integer, ForeignKey('bill.pk_bill'), nullable=False),

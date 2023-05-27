@@ -2,7 +2,7 @@ import sqlalchemy.orm
 
 import adapter_orm
 import secrets
-from domain import RecordKinds, BudgetKinds
+from domain import RecordKinds, BudgetKinds, RecordSubKinds
 from repository import SqlAlchemyRepository
 from services import (
     UserService,
@@ -25,7 +25,7 @@ from services import (
 
 
 engine = sqlalchemy.create_engine(
-    f'postgresql+psycopg2://{secrets.DB_USER_NAME}:{secrets.DB_USER_PASSWORD}@localhost:5432/accounting_db'
+    f'postgresql+psycopg2://{secrets.DB_USER_NAME}:{secrets.DB_USER_PASSWORD}@localhost:5434/accounting_db'
 )
 # engine = sqlalchemy.create_engine('sqlite:///./db.db')
 
@@ -121,7 +121,7 @@ bill_service.create(
     owner=user_service.read(2), name='Приват', amount=5000, currency='UAH', is_for_business=False
 )
 bill_service.create(
-    owner=user_service.read(2), name='МоноБанк', amount=500, currency='UAH', is_for_business=False
+    owner=user_service.read(2), name='Картка ФОП', amount=500, currency='UAH', is_for_business=True
 )
 
 ########################################################################################################################
@@ -196,7 +196,10 @@ user_record_service.create(
 # create businesses
 
 business_service.create(
-    name='кав\'ярня',
+    name='Кавʼярня',
+    owner_name='Кравченко Арсеній Миколайович',
+    taxpayer_account_card='1234567890',
+    address="м. Чернігів, вул. Доценка, 17, кв. 35",
     owner=user_service.read(2)
 )
 
@@ -231,6 +234,7 @@ business_record_service.create(
     amount=1000,
     description='Покупка кавоварок',
     kind=RecordKinds.SPENDING,
+    sub_kind=RecordSubKinds.REGULAR_SPENDING,
     currency='UAH',
     from_business_category=business_category_service.read(1)
 )
@@ -241,6 +245,7 @@ business_record_service.create(
     amount=70,
     description='Продаж кави',
     kind=RecordKinds.INCOME,
+    sub_kind=RecordSubKinds.CASH,
     currency='UAH',
     from_business_category=business_category_service.read(1)
 )

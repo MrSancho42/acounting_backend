@@ -14,6 +14,16 @@ class BudgetKinds(Enum):
     BY_RECORD = 'BY_RECORD'
 
 
+class RecordSubKinds(Enum):
+    CASH = 'CASH'
+    NON_CASH = 'NON_CASH'
+    FREE_RECEIVED = 'FREE_RECEIVED'
+    GRANTS = 'GRANTS'
+
+    REGULAR_SPENDING = 'REGULAR_SPENDING'
+    REFUND = 'REFUND'
+
+
 @dataclass
 class User:
     pk_user: int | None
@@ -43,6 +53,9 @@ class Business:
     fk_user: int | None
 
     name: str
+    owner_name: str
+    taxpayer_account_card: str
+    address: str
 
     owner: User
 
@@ -145,6 +158,7 @@ class BusinessCategory(Category):
 class BusinessRecord(Record):
     fk_business: int | None
 
+    sub_kind: RecordSubKinds
     from_business: Business
     from_business_category: BusinessCategory
 
