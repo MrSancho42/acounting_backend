@@ -64,6 +64,8 @@ class UserRecordService(BaseService):
                 'kind': record.kind,
                 'creation_time': record.creation_time,
                 'currency': record.currency,
+                'fk_category': record.fk_category,
+                'category_name': None,
             },
             records
         ))

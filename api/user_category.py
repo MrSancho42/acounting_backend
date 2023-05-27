@@ -24,6 +24,10 @@ class GetUserCategory(UserCategoryModel):
     child_categories: list = []
 
 
+class GetUserCategoryName(BaseModel):
+    category_name: str
+
+
 @router.post('/create', status_code=status.HTTP_201_CREATED)
 async def create(
     pk_user: Annotated[int, Body(embed=True)],

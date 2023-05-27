@@ -27,7 +27,6 @@ from services import (
 engine = sqlalchemy.create_engine(
     f'postgresql+psycopg2://{secrets.DB_USER_NAME}:{secrets.DB_USER_PASSWORD}@localhost:5434/accounting_db'
 )
-# engine = sqlalchemy.create_engine('sqlite:///./db.db')
 
 
 adapter_orm.metadata.drop_all(engine)
