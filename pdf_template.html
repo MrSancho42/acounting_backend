@@ -1,0 +1,75 @@
+<div align="center">
+    <table border="1" width="100%" cellspacing="0" cellpadding="0">
+        <tbody>
+            <tr>
+                <td style="border-color: #000000;" colspan="4" valign="top" width="626">
+        			<br/>
+                    <p style="text-align:center;"><strong>Книга обліку доходів фізичної особи-підприємця</strong></p>
+                    <p style="text-align:center;"><strong>{{owner}}</strong></p>
+                    <ul>
+                        <li>дата початку ведення 01.01.2023;</li>
+                        <li>НОКПП {{taxpayer_account_card}};</li>
+                        <li>адреса місця реєстрації фізичної особи-підприємця: {{address}};</li>
+                        <li>одиниця виміру доходу за господарськими операціями – грн з копійками;</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td style="border-color: #000000; width: 626px; background-color: #e39696;" colspan="4" width="626">
+                    <p style="text-align:center;"><strong>ОБЛІК ДОХОДІВ ЗА 2023 РІК</strong></p>
+                </td>
+            </tr>
+            <tr>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="87">
+                    <p style="text-align:center;"><strong>Дата</strong></p>
+                </td>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="85">
+                    <p style="text-align:center;"><strong>Сума </strong></p>
+                    <p style="text-align:center;"><strong>доходу</strong></p>
+                </td>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="454">
+                    <p style="text-align:center;"><strong>Зміст доходу</strong></p>
+                </td>
+            </tr>
+
+            {% for month_item in records.values() %}
+            {% for record in month_item["records"] %}
+            <tr>
+                <td style="border-color: #000000;" width="87">
+                    <p style="text-align:center;">{{record["date"]}}</p>
+                </td>
+                <td style="border-color: #000000;" width="85">
+                    <p style="text-align:center;">{{record["amount"]}}</p>
+                </td>
+                <td style="border-color: #000000;" width="454">
+                    <p>{{record["description"]}}</p>
+                </td>
+            </tr>
+
+            {% endfor %}
+               <tr>
+                <td style="border-color: #000000;" valign="top" width="87">
+                    <p style="text-align:center;"><strong>Всього, за {{month_item["name"]}}</strong></p>
+                </td>
+                <td style="border-color: #000000;" width="85">
+                    <p style="text-align:center;"><strong>{{month_item['summary']}}</strong></p>
+                </td>
+                <td style="border-color: #000000;" width="454">
+                    <p style="text-align:center;"><strong>×</strong></p>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td style="border-color: #000000;" valign="top" width="87">
+                    <p style="text-align:center;"><strong>Всього за рік</strong></p>
+                </td>
+                <td style="border-color: #000000;" width="85">
+                    <p style="text-align:center;"><strong>…</strong></p>
+                </td>
+                <td style="border-color: #000000;" valign="top" width="454">
+                    <p style="text-align:center;"><strong>×</strong></p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
