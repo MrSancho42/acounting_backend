@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from domain import Bill, BusinessRecord, RecordKinds, Business, BusinessCategory
+from domain import Bill, BusinessRecord, RecordKinds, Business, BusinessCategory, RecordSubKinds
 from services.base_service import BaseService
 from services import BillService
 
@@ -15,6 +15,7 @@ class BusinessRecordService(BaseService):
         amount: float,
         description: str,
         kind: RecordKinds,
+        sub_kind: RecordSubKinds,
         creation_time: datetime = datetime.now(),
         currency: str = 'UAH',
     ):
@@ -25,6 +26,7 @@ class BusinessRecordService(BaseService):
             amount=amount,
             description=description,
             kind=kind,
+            sub_kind=sub_kind,
             creation_time=creation_time,
             currency=currency,
 
@@ -47,14 +49,20 @@ class BusinessRecordService(BaseService):
     def delete(self):
         ...
 
+    def sort_by_date(self, record: BusinessRecord):
+        return record.creation_time.timestamp()
+
     def get_business_records(self, from_business: Business, from_bill: Bill | None = None):
-        records = list(filter(lambda record: not from_bill or record.from_bill == from_bill, from_business.records))
+        records = sorted(from_business.records, key=self.sort_by_date, reverse=True)
+        records = list(filter(lambda record: from_bill is None or record.from_bill == from_bill, records))
         return list(map(
             lambda record: {
                 'pk_record': record.pk_record,
+                'fk_bill': record.fk_bill,
                 'amount': record.amount,
                 'description': record.description,
                 'kind': record.kind,
+                'sub_kind': record.sub_kind,
                 'creation_time': record.creation_time,
                 'currency': record.currency,
             },

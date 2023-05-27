@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from services_manager import (
     user_service, business_service, business_record_service, bill_service, business_category_service
 )
-from domain import RecordKinds
+from domain import RecordKinds, RecordSubKinds
 
 router = APIRouter(
     prefix='/business-record-services',
@@ -21,11 +21,13 @@ class BusinessRecord(BaseModel):
     description: str
     currency: str
     kind: RecordKinds
+    sub_kind: RecordSubKinds
     creation_time: datetime = datetime.now()
 
 
 class GetBusinessRecord(BusinessRecord):
     pk_record: int
+    fk_bill: int
 
 
 @router.post('/create', status_code=status.HTTP_201_CREATED)
@@ -42,6 +44,13 @@ async def create(
         from_business=business,
         from_business_category=business_category_service.read(1),
         **business_record.dict()
+    )
+
+
+@router.patch('/update', status_code=status.HTTP_200_OK)
+async def update(business_record: GetBusinessRecord):
+    business_record_service.update(
+        business_record_service.read(business_record.pk_record), business_record.dict(exclude_unset=True)
     )
 
 
