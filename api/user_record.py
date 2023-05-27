@@ -5,7 +5,7 @@ from fastapi import APIRouter, Body, status
 from pydantic import BaseModel
 
 from services_manager import user_record_service, bill_service, user_service, user_category_service
-from domain import RecordKinds
+from domain import RecordKinds, UserCategory
 
 router = APIRouter(
     prefix='/record-services',
@@ -24,6 +24,8 @@ class UserRecord(BaseModel):
 
 class GetRecord(UserRecord):
     pk_record: int
+    fk_category: int
+    category_name: str
 
 
 @router.post('/create', status_code=status.HTTP_201_CREATED)
@@ -51,4 +53,12 @@ async def get_records(pk_user: int | None = None, pk_bill: int | None = None):
     elif pk_user is None and pk_bill is not None:
         # or define bill
         from_bill = bill_service.read(pk_bill)
-    return user_record_service.get_records(from_user=from_user, from_bill=from_bill)
+    records = user_record_service.get_records(from_user=from_user, from_bill=from_bill)
+
+    # add category name to result
+    result = []
+    for record in records:
+        record['category_name'] = user_category_service.get_user_category_name(record['fk_category'])
+        result.append(record)
+
+    return result

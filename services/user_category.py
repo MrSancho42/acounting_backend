@@ -44,3 +44,6 @@ class UserCategoryService(BaseService):
             },
             user_categories
         ))
+
+    def get_user_category_name(self, pk_category: int):
+        return self.read(pk_category).name
