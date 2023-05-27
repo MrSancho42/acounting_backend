@@ -21,6 +21,7 @@ class UserCategoryModel(BaseModel):
 class GetUserCategory(UserCategoryModel):
     pk_user_category: int
     fk_parent_category: int | None
+    child_categories: list = []
 
 
 @router.post('/create', status_code=status.HTTP_201_CREATED)
@@ -43,4 +44,16 @@ async def create(
 @router.get('/get-user-categories', response_model=list[GetUserCategory])
 async def get_user_categories(pk_user: int):
     from_user = user_service.read(pk_user)
-    return user_category_service.get_user_categories(from_user)
+    categories = user_category_service.get_user_categories(from_user)
+
+    result = {}
+    for category in categories:
+        if category['fk_parent_category'] is None:
+            result[category['pk_user_category']] = category
+            result[category['pk_user_category']]['child_categories'] = []
+
+    for category in categories:
+        if category['fk_parent_category']:
+            result[category['fk_parent_category']]['child_categories'].append(category)
+
+    return list(result.values())
