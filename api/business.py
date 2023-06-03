@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from services_manager import user_service, business_service, business_record_service
-from domain import BusinessRecord, RecordKinds
+from domain import BusinessRecord, RecordKinds, RecordSubKinds
 
 template_env = jinja2.Environment(loader=jinja2.FileSystemLoader('./'))
 
@@ -27,6 +27,29 @@ month_names = {
     10: 'жовтень',
     11: 'листопад',
     12: 'грудень'
+}
+
+groups = {
+    1: {
+        'tax': 268.40,
+        'limit': 1_118_900,
+        'is_fixed': True
+    },
+    2: {
+        'tax': 1340.0,
+        'limit': 5_587_800,
+        'is_fixed': True
+    },
+    3: {
+        'tax': 0.05,
+        'limit': 7_818_900,
+        'is_fixed': False
+    },
+    4: {
+        'tax': 0.02,
+        'limit': 7_818_900,
+        'is_fixed': False
+    }
 }
 
 
@@ -75,45 +98,123 @@ async def get_businesses(pk_user: int):
     return business_service.get_businesses(user_service.read(pk_user))
 
 
-def create_report_list(records: list[dict]):
-    report_list = {}
+def create_report(records: list[dict], start, group):
+    group = groups[group]
+    month_records = {}
+    for number, name in month_names.items():
+        if number < start.month:
+            continue
+        month_records[number] = {
+            'summary': 0,
+            'name': name,
+            'CASH': 0,
+            'NON_CASH': 0,
+            'FREE_RECEIVED': 0,
+            'REFUND': 0,
+            'esv': 1474,
+            'tax': group['tax'] if group['is_fixed'] else 0.0,
+            'over_normal': False
+        }
+
     for record in records:
-        if record['kind'] == RecordKinds.SPENDING:
+        if record['sub_kind'] == RecordSubKinds.GRANTS or record['sub_kind'] == RecordSubKinds.REGULAR_SPENDING:
+            continue
+        if record['creation_time'].year != start.year or record['creation_time'].month < start.month:
             continue
         month = record['creation_time'].month
-        if not report_list or month not in report_list:
-            report_list[month] = {
-                "summary": 0,
-                "name": month_names[month],
-                "records": []
-            }
 
-        report_list[month]['records'].append({
-            'date': record['creation_time'].strftime("%d.%m.%Y"),
-            'amount': record['amount'],
-            'description': record['description']
+        if record['kind'] == RecordKinds.SPENDING:
+            month_records[month]['summary'] -= record['amount']
+            month_records[month]['REFUND'] -= record['amount']
+        else:
+            month_records[month]['summary'] += record['amount']
+            month_records[month][record['sub_kind'].value] += record['amount']
+
+        if not group['is_fixed']:
+            month_records[month]['tax'] = round(month_records[month]['summary'] * group['tax'], 2)
+
+    year_summary = 0
+    for month in month_records.values():
+        year_summary += month['summary']
+        month['over_normal'] = year_summary >= group['limit']
+
+    quarter_to_month = {
+        1: [1, 2, 3],
+        2: [4, 5, 6],
+        3: [7, 8, 9],
+        4: [10, 11, 12]
+    }
+
+    over_normal = False
+    quarters = []
+    for quarter in range(1, 5):
+        if not set(month_records.keys()) & set(quarter_to_month[quarter]):
+            continue
+        summary = 0
+        CASH = 0
+        NON_CASH = 0
+        FREE_RECEIVED = 0
+        REFUND = 0
+        month_list = []
+        for month in quarter_to_month[quarter]:
+            if month not in month_records:
+                continue
+            summary += month_records[month]['summary']
+            CASH += month_records[month]['CASH']
+            NON_CASH += month_records[month]['NON_CASH']
+            FREE_RECEIVED += month_records[month]['FREE_RECEIVED']
+            REFUND += month_records[month]['REFUND']
+            month_list.append(month_records[month])
+            over_normal = month_records[month]['over_normal']
+        quarters.append({
+            'summary': summary,
+            'name': quarter,
+            'CASH': CASH,
+            'NON_CASH': NON_CASH,
+            'FREE_RECEIVED': FREE_RECEIVED,
+            'REFUND': REFUND,
+            'month_list': month_list,
+            'tax': round(group['tax'] * len(month_list), 2) if group['is_fixed'] else round(summary * group['tax'], 2),
+            'esv': 1474 * len(month_list),
+            'over_normal': over_normal
         })
-        report_list[month]['summary'] += record['amount']
-    return report_list
+
+    year_report = {
+        'summary': year_summary,
+        'tax': round(group['tax'] * len(month_records), 2) if group['is_fixed'] else round(year_summary * group['tax'], 2),
+        'esv': 1474 * len(month_records),
+        'over_normal': over_normal
+    }
+
+    return quarters, year_report
 
 
 @router.get('/get-book-report')
-async def get_book_report():  # pk_business: Annotated[int, Body(embed=True)]
-
+async def get_book_report(year, month,  group: int):  # pk_business: Annotated[int, Body(embed=True)]
+    month = dict(zip(month_names.values(), month_names.keys()))[month]
+    year = datetime.strptime(year, "%a %b %d %Y %H:%M:%S GMT%z").year
     template = template_env.get_template('pdf_template.html')
     business = business_service.read(1)
-    records = create_report_list(business_record_service.get_business_records(from_business=business))
+
+    quarters, year_report = create_report(
+        business_record_service.get_business_records(from_business=business),
+        datetime(year, month, 1),
+        group
+    )
 
     context = {
+        'start': datetime(year, month, 1).strftime("%d.%m.%Y"),
         'owner': business.owner_name,
         'address': business.address,
         'taxpayer_account_card': business.taxpayer_account_card,
-        'records': records
+        'quarters': quarters,
+        'year_report': year_report
     }
     options = {
         'encoding': 'UTF-8',
         'quiet': '',
-        'enable-local-file-access': ''
+        'enable-local-file-access': '',
+        'orientation': 'Landscape'
     }
 
     config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')

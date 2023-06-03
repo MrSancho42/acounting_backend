@@ -2,72 +2,167 @@
     <table border="1" width="100%" cellspacing="0" cellpadding="0">
         <tbody>
             <tr>
-                <td style="border-color: #000000;" colspan="4" valign="top" width="626">
+                <td style="border-color: #000000;" colspan="9" valign="top" width="700">
         			<br/>
                     <p style="text-align:center;"><strong>Книга обліку доходів фізичної особи-підприємця</strong></p>
                     <p style="text-align:center;"><strong>{{owner}}</strong></p>
                     <ul>
-                        <li>дата початку ведення 01.01.2023;</li>
-                        <li>НОКПП {{taxpayer_account_card}};</li>
+                        <li>дата початку ведення {{start}};</li>
+                        <li>РНОКПП {{taxpayer_account_card}};</li>
                         <li>адреса місця реєстрації фізичної особи-підприємця: {{address}};</li>
                         <li>одиниця виміру доходу за господарськими операціями – грн з копійками;</li>
                     </ul>
                 </td>
             </tr>
             <tr>
-                <td style="border-color: #000000; width: 626px; background-color: #e39696;" colspan="4" width="626">
+                <td style="border-color: #000000; width: 700px; background-color: #e39696;" colspan="9" width="700">
                     <p style="text-align:center;"><strong>ОБЛІК ДОХОДІВ ЗА 2023 РІК</strong></p>
                 </td>
             </tr>
             <tr>
-                <td style="border-color: #000000; background-color: #f5d3d3;" width="87">
-                    <p style="text-align:center;"><strong>Дата</strong></p>
+                <td style="border-color: #000000; background-color: #f5d3d3;" rowspan="2" width="100">
+                    <p style="text-align:center;"><strong>Період</strong></p>
                 </td>
-                <td style="border-color: #000000; background-color: #f5d3d3;" width="85">
-                    <p style="text-align:center;"><strong>Сума </strong></p>
-                    <p style="text-align:center;"><strong>доходу</strong></p>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="75" rowspan="2">
+                    <p style="text-align:center;"><strong>Сума доходів</strong></p>
                 </td>
-                <td style="border-color: #000000; background-color: #f5d3d3;" width="454">
-                    <p style="text-align:center;"><strong>Зміст доходу</strong></p>
+                <td width="450" colspan="4">
+                    <p style="text-align:center; background-color: #f5d3d3"><strong>Із них</strong></p>
                 </td>
-            </tr>
-
-            {% for month_item in records.values() %}
-            {% for record in month_item["records"] %}
-            <tr>
-                <td style="border-color: #000000;" width="87">
-                    <p style="text-align:center;">{{record["date"]}}</p>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="75" rowspan="2">
+                    <p style="text-align:center;"><strong>Перевищення річного ліміту</strong></p>
                 </td>
-                <td style="border-color: #000000;" width="85">
-                    <p style="text-align:center;">{{record["amount"]}}</p>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="75" rowspan="2">
+                    <p style="text-align:center;"><strong>ЄСВ</strong></p>
                 </td>
-                <td style="border-color: #000000;" width="454">
-                    <p>{{record["description"]}}</p>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="75" rowspan="2">
+                    <p style="text-align:center;"><strong>Податок</strong></p>
                 </td>
             </tr>
 
-            {% endfor %}
-               <tr>
-                <td style="border-color: #000000;" valign="top" width="87">
-                    <p style="text-align:center;"><strong>Всього, за {{month_item["name"]}}</strong></p>
+            <tr>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="75">
+                    <p style="text-align:center;"><strong>Готівковий розрахунок</strong></p>
                 </td>
-                <td style="border-color: #000000;" width="85">
-                    <p style="text-align:center;"><strong>{{month_item['summary']}}</strong></p>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="75">
+                    <p style="text-align:center;"><strong>Безготівковий розрахунок</strong></p>
                 </td>
-                <td style="border-color: #000000;" width="454">
-                    <p style="text-align:center;"><strong>×</strong></p>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="75">
+                    <p style="text-align:center;"><strong>Безоплатно отриманий дохід</strong></p>
+                </td>
+                <td style="border-color: #000000; background-color: #f5d3d3;" width="75">
+                    <p style="text-align:center;"><strong>Повернення коштів</strong></p>
                 </td>
             </tr>
+
+            {% for quarter in quarters %}
+                {% for month in quarter["month_list"] %}
+                <tr>
+                    <td style="border-color: #000000;" width="100">
+                        <p style="text-align:center;">{{month["name"]}}</p>
+                    </td>
+                    <td style="border-color: #000000;" width="75">
+                        <p style="text-align:center;">{{month["summary"]}}</p>
+                    </td>
+                    <td style="border-color: #000000;" width="75">
+                        <p style="text-align:center;">{{month["CASH"]}}</p>
+                    </td>
+                    <td style="border-color: #000000;" width="75">
+                        <p style="text-align:center;">{{month["NON_CASH"]}}</p>
+                    </td>
+                    <td style="border-color: #000000;" width="75">
+                        <p style="text-align:center;">{{month["FREE_RECEIVED"]}}</p>
+                    </td>
+                    <td style="border-color: #000000;" width="75">
+                        <p style="text-align:center;">{{month["REFUND"]}}</p>
+                    </td>
+                    <td style="border-color: #000000;" width="75">
+                        <p style="text-align:center;">
+                            {% if month["over_normal"] %}
+                              Ліміт перевищено
+                            {% else %}
+                              Немає
+                            {% endif %}
+                        </p>
+                    </td>
+                    <td style="border-color: #000000;" width="75">
+                        <p style="text-align:center;">{{month["esv"]}}</p>
+                    </td>
+                    <td style="border-color: #000000;" width="75">
+                        <p style="text-align:center;">{{month["tax"]}}</p>
+                    </td>
+                </tr>
+
+                {% endfor %}
+                   <tr>
+                        <td style="border-color: #000000; background-color: #f5d3d3" valign="top" width="100">
+                            <p style="text-align:center;"><strong>Всього, за {{quarter["name"]}} квартал</strong></p>
+                        </td>
+                        <td style="border-color: #000000; background-color: #f5d3d3" width="75">
+                            <p style="text-align:center;"><strong>{{quarter['summary']}}</strong></p>
+                        </td>
+                        <td style="border-color: #000000; background-color: #f5d3d3" width="75">
+                            <p style="text-align:center;"><strong>{{quarter["CASH"]}}</strong></p>
+                        </td>
+                        <td style="border-color: #000000; background-color: #f5d3d3" width="75">
+                            <p style="text-align:center;"><strong>{{quarter["NON_CASH"]}}</strong></p>
+                        </td>
+                        <td style="border-color: #000000; background-color: #f5d3d3" width="75">
+                            <p style="text-align:center;"><strong>{{quarter["FREE_RECEIVED"]}}</strong></p>
+                        </td>
+                        <td style="border-color: #000000; background-color: #f5d3d3" width="75">
+                            <p style="text-align:center;"><strong>{{quarter["REFUND"]}}</strong></p>
+                        </td>
+                        <td style="border-color: #000000; background-color: #f5d3d3" width="75">
+                            <p style="text-align:center;"><strong>
+                                {% if quarter["over_normal"] %}
+                                  Ліміт перевищено
+                                {% else %}
+                                  Немає
+                                {% endif %}
+                            </strong></p>
+                        </td>
+                        <td style="border-color: #000000; background-color: #f5d3d3" width="75">
+                            <p style="text-align:center;"><strong>{{quarter["esv"]}}</strong></p>
+                        </td>
+                        <td style="border-color: #000000; background-color: #f5d3d3" width="75">
+                            <p style="text-align:center;"><strong>{{quarter["tax"]}}</strong></p>
+                        </td>
+                    </tr>
             {% endfor %}
             <tr>
-                <td style="border-color: #000000;" valign="top" width="87">
+                <td style="border-color: #000000; background-color: #e39696;" valign="top" width="100">
                     <p style="text-align:center;"><strong>Всього за рік</strong></p>
                 </td>
-                <td style="border-color: #000000;" width="85">
-                    <p style="text-align:center;"><strong>…</strong></p>
+                <td style="border-color: #000000; background-color: #e39696;" width="75">
+                    <p style="text-align:center;"><strong>{{year_report["summary"]}}</strong></p>
                 </td>
-                <td style="border-color: #000000;" valign="top" width="454">
+                <td style="border-color: #000000; background-color: #e39696;" valign="top" width="75">
                     <p style="text-align:center;"><strong>×</strong></p>
+                </td>
+                <td style="border-color: #000000; background-color: #e39696;" width="75">
+                    <p style="text-align:center;"><strong>×</strong></p>
+                </td>
+                <td style="border-color: #000000; background-color: #e39696;" width="75">
+                    <p style="text-align:center;"><strong>×</strong></p>
+                </td>
+                <td style="border-color: #000000; background-color: #e39696;" width="75">
+                    <p style="text-align:center;"><strong>×</strong></p>
+                </td>
+                <td style="border-color: #000000; background-color: #e39696;" width="75">
+                    <p style="text-align:center;"><strong>
+                        {% if year_report["over_normal"] %}
+                          Ліміт перевищено
+                        {% else %}
+                          Немає
+                        {% endif %}
+                    </strong></p>
+                </td>
+                <td style="border-color: #000000; background-color: #e39696;" width="75">
+                   <p style="text-align:center;"><strong>{{year_report["esv"]}}</strong></p>
+                </td>
+                <td style="border-color: #000000; background-color: #e39696;" width="75">
+                    <p style="text-align:center;"><strong>{{year_report["tax"]}}</strong></p>
                 </td>
             </tr>
         </tbody>
