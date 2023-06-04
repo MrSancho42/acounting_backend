@@ -11,7 +11,8 @@ from services import (
 )
 
 engine = sqlalchemy.create_engine(
-    f'postgresql+psycopg2://{secrets.DB_USER_NAME}:{secrets.DB_USER_PASSWORD}@localhost:5434/accounting_db'
+    f'postgresql+psycopg2://{secrets.DB_USER_NAME}:{secrets.DB_USER_PASSWORD}@'
+    f'{secrets.DB_ADDRESS}:{secrets.DB_PORT}/{secrets.DB_NAME}'
 )
 
 adapter_orm.metadata.create_all(engine)
