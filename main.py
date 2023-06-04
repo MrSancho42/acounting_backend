@@ -5,18 +5,14 @@ from api import (
     user, business, bill, business_record, user_record, user_category, group_category, group_record, business_category,
     user_category_budget, group_category_budget, user_record_budget, group_record_budget
 )
+from secrets import ORIGINS
 
-origins = [
-    'http://localhost',
-    'http://localhost:8000',
-    'http://localhost:3000',
-]
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=ORIGINS,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
