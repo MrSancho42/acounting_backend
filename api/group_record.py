@@ -49,3 +49,5 @@ async def get_records(pk_group: int):
     from_group = group_service.read(pk_group)
 
     return group_record_service.get_group_records(from_group=from_group)
+    # return group_record_service.get_group_records(from_group=from_group)
+    # if group_record_service.get_group_records(from_group=from_group) else [{}]

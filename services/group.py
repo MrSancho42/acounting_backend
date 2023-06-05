@@ -18,3 +18,13 @@ class GroupService(BaseService):
 
     def delete(self):
         ...
+
+    def get_groups(self, user: User):
+        groups = user.groups
+        return list(map(
+            lambda group: {
+                'name': group.name,
+                'pk_group': group.pk_group,
+            },
+            groups
+        ))

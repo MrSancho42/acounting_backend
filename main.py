@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api import (
     user, business, bill, business_record, user_record, user_category, group_category, group_record, business_category,
-    user_category_budget, group_category_budget, user_record_budget, group_record_budget
+    user_category_budget, group_category_budget, user_record_budget, group_record_budget, group
 )
 from secrets import ORIGINS
 
@@ -24,6 +24,7 @@ app.include_router(bill.router)
 app.include_router(business_record.router)
 app.include_router(user_record.router)
 app.include_router(user_category.router)
+app.include_router(group.router)
 app.include_router(group_category.router)
 app.include_router(group_record.router)
 app.include_router(business_category.router)
