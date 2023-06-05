@@ -28,6 +28,11 @@ class GetRecord(UserRecord):
     category_name: str
 
 
+class UpdateRecord(UserRecord):
+    pk_record: int
+    fk_category: int
+
+
 @router.post('/create', status_code=status.HTTP_201_CREATED)
 async def create(
     pk_bill: Annotated[int, Body(embed=True)],
@@ -40,6 +45,15 @@ async def create(
         from_bill=bill,
         from_user_category=category,
         **record.dict()
+    )
+
+
+@router.patch('/update', status_code=status.HTTP_200_OK)
+async def update(user_record: UpdateRecord):
+    print(user_record)
+    print(user_record_service.read(user_record.pk_record), user_record.dict(exclude_unset=True))
+    user_record_service.update(
+        user_record_service.read(user_record.pk_record), user_record.dict(exclude_unset=True)
     )
 
 
