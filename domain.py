@@ -36,6 +36,7 @@ class User:
     bills: list = field(default_factory=list)
     user_categories: list = field(default_factory=list)
     user_budgets: list = field(default_factory=list)
+    groups: list = field(default_factory=list)
 
 
 class UserException:
