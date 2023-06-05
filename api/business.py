@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from services_manager import user_service, business_service, business_record_service
 from domain import BusinessRecord, RecordKinds, RecordSubKinds
+from secrets import WKHTMLTOPDF_PATH
 
 template_env = jinja2.Environment(loader=jinja2.FileSystemLoader('./'))
 
@@ -190,11 +191,11 @@ def create_report(records: list[dict], start, group):
 
 
 @router.get('/get-book-report')
-async def get_book_report(year, month,  group: int):  # pk_business: Annotated[int, Body(embed=True)]
+async def get_book_report(year, month,  group: int, pk_business: int):
     month = dict(zip(month_names.values(), month_names.keys()))[month]
     year = datetime.strptime(year, "%a %b %d %Y %H:%M:%S GMT%z").year
     template = template_env.get_template('pdf_template.html')
-    business = business_service.read(1)
+    business = business_service.read(pk_business)
 
     quarters, year_report = create_report(
         business_record_service.get_business_records(from_business=business),
@@ -217,7 +218,7 @@ async def get_book_report(year, month,  group: int):  # pk_business: Annotated[i
         'orientation': 'Landscape'
     }
 
-    config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
+    config = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_PATH)
 
     pdf_buffer = BytesIO(
         pdfkit.from_string(
